@@ -12,7 +12,7 @@
         <dt>{{ _('Languages') }}</dt>
         {% for slug, url in languages %}
           {% if slug == current_language %} <strong> {% endif %}
-          <dd><a href="{{ url }}">{{ slug }}</a></dd>
+          <dd><a href="../{{ slug }}">{{ slug }}</a></dd>
           {% if slug == current_language %} </strong> {% endif %}
         {% endfor %}
       </dl>
@@ -22,7 +22,7 @@
         <dt>{{ _('Versions') }}</dt>
         {% for slug, url in versions %}
           {% if slug == current_version %} <strong> {% endif %}
-          <dd><a href="{{ url }}">{{ slug }}</a></dd>
+          <dd><a href="../{{ slug }}">{{ slug }}</a></dd>
           {% if slug == current_version %} </strong> {% endif %}
         {% endfor %}
       </dl>
