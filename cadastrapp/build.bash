@@ -46,18 +46,12 @@ for item in "${liste_versions[@]}"; do
   mkdir docs/_templates
   cp -f ../versions.html docs/_templates/
 
-  read -p "Press any key to resume ..."
-
   # on builde la version HTML
   sphinx-build -b html docs/ ../html/$item
-
-  read -p "Press any key to resume ..."
 
   # nettoyage
   git checkout docs/conf.py
   rm -rf docs/_templates
-
-  read -p "Press any key to resume ..."
 
   echo " patch CSS"
   sed -i -e 's/max-width:800px/max-width:1200px/g' ../cadastrapp_docs/html/$item/_static/css/theme.css
