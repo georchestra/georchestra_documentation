@@ -15,6 +15,9 @@ echo " liste des versions"
 # on va dans le dépôt
 cd repo
 
+# on rafraîchit le dépôt
+git pull
+
 # on crée une liste de tags / branches à builder
 liste_versions=()
 
