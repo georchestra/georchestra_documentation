@@ -74,3 +74,11 @@ done
 git checkout master
 
 
+echo ""
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " copie la page de redirection web"
+cd ..
+cp index.html html/
+echo " fait"
+echo ""
+
