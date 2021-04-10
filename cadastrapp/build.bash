@@ -47,7 +47,7 @@ for item in "${liste_versions[@]}"; do
   # on change de branche
   git checkout $item
 
-  # on copie le fichier conf.py
+  # on copie les fichiers nécessaire
   cp -f ../conf.py docs/conf.py
   mkdir docs/_templates
   cp -f ../versions.html docs/_templates/
