@@ -23,11 +23,23 @@ release = re.sub('^v', '', os.popen('git describe').read().strip())
 version = release
 
 
+from datetime import datetime
+
+currentSecond= datetime.now().second
+currentMinute = datetime.now().minute
+currentHour = datetime.now().hour
+
+currentDay = datetime.now().day
+currentMonth = datetime.now().month
+currentYear = datetime.now().year
+
+
 # -- Project information -----------------------------------------------------
 
 project = 'Cadastrapp'
-copyright = '2021, la communauté geOrchestra'
+copyright = str(currentYear) + ', la communauté geOrchestra'
 author = 'la communauté geOrchestra'
+#buildDateTime = currentDay+"/"+currentMonth+"/"+currentYear+" "+currentHour+":"+currentMinute
 
 # The full version, including alpha/beta/rc tags
 #release = '1.0'
