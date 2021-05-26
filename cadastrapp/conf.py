@@ -14,6 +14,13 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+
+# requirements
+# python -m pip install gitpython
+# python -m pip install sphinx
+# python -m pip install sphinx_rtd_theme
+
+
 import os
 import re
 
