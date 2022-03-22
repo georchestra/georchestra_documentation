@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>UPGRADING from 13.09 to 14.01 &#8212; Python  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="upgrading-from-13-09-to-14-01">
+<h1>UPGRADING from 13.09 to 14.01<a class="headerlink" href="#upgrading-from-13-09-to-14-01" title="Permalink to this headline">¶</a></h1>
+<ul>
+<li><p>As a result of <a class="reference external" href="https://github.com/georchestra/georchestra/issues/569">#569</a>, LDAP groups are now <code class="docutils literal notranslate"><span class="pre">groupOfNames</span></code> instances rather than <code class="docutils literal notranslate"><span class="pre">posixGroup</span></code> instances. You have to migrate your LDAP tree, according to the following procedure (please change the <code class="docutils literal notranslate"><span class="pre">dc=georchestra,dc=org</span></code> string for your own base DN):</p>
+<ul class="simple">
+<li><p>dump your ldap <strong>groups</strong> with:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ldapsearch</span> <span class="o">-</span><span class="n">H</span> <span class="n">ldap</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">389</span> <span class="o">-</span><span class="n">xLLL</span> <span class="o">-</span><span class="n">D</span> <span class="s2">&quot;cn=admin,dc=georchestra,dc=org&quot;</span> <span class="o">-</span><span class="n">w</span> <span class="n">your_ldap_password</span> <span class="o">-</span><span class="n">b</span> <span class="s2">&quot;ou=groups,dc=georchestra,dc=org&quot;</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">groups</span><span class="o">.</span><span class="n">ldif</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>migration:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="s1">&#39;s/\(memberUid: \)\(.*\)/member: uid=</span><span class="se">\2</span><span class="s1">,ou=users,dc=georchestra,dc=org/&#39;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">groups</span><span class="o">.</span><span class="n">ldif</span>
+<span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="s1">&#39;s/posixGroup/groupOfNames/&#39;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">groups</span><span class="o">.</span><span class="n">ldif</span>
+<span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="s1">&#39;/gidNumber/d&#39;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">groups</span><span class="o">.</span><span class="n">ldif</span> <span class="n">OR</span> <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="s1">&#39;s/gidNumber/ou/&#39;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">groups</span><span class="o">.</span><span class="n">ldif</span> <span class="k">if</span> <span class="n">geofence</span> <span class="ow">is</span> <span class="n">deployed</span>
+<span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="s1">&#39;s/objectClass: groupOfNames/objectClass: groupOfNames</span><span class="se">\n</span><span class="s1">member: uid=fakeuser/&#39;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">groups</span><span class="o">.</span><span class="n">ldif</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>drop your groups organizationalUnit (<code class="docutils literal notranslate"><span class="pre">ou</span></code>)</p></li>
+<li><p>optionally, have a look at the provided <a class="reference external" href="https://github.com/georchestra/LDAP/blob/master/georchestra-memberof.ldif">georchestra-memberof.ldif</a> file, which creates &amp; configures the <a class="reference external" href="http://www.openldap.org/doc/admin24/overlays.html">memberOf overlay</a>. As root, and after checking that the file targets the correct database (<code class="docutils literal notranslate"><span class="pre">olcDatabase={1}hdb</span></code> by default): <code class="docutils literal notranslate"><span class="pre">ldapadd</span> <span class="pre">-Y</span> <span class="pre">EXTERNAL</span> <span class="pre">-H</span> <span class="pre">ldapi://</span> <span class="pre">&lt;</span> <span class="pre">georchestra-memberof.ldif</span></code></p></li>
+<li><p>import the updated groups.ldif file.</p></li>
+</ul>
+</li>
+<li><p>analytics: the ExtJS submodule path has changed, be sure to run <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">submodule</span> <span class="pre">update</span> <span class="pre">--init</span></code> when you switch branches.</p></li>
+<li><p>databases: the downloadform, ogcstatistics and ldapadmin databases are now merged into a single one named “georchestra”. Each webapp expects to find its tables in a dedicated schema (“downloadform” for the downloadform module, “ogcstatistics” for ogc-server-statistics, and “ldapadmin” for ldapadmin). See <a class="reference external" href="https://github.com/georchestra/georchestra/pull/535">#535</a> for the complete patch. If you currently have one dedicated database for each module, you can keep your setup, provided you customize the <code class="docutils literal notranslate"><span class="pre">shared.psql.ogc.statistics.db</span></code>, <code class="docutils literal notranslate"><span class="pre">shared.psql.download_form.db</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">shared.ldapadmin.db</span></code> maven filters in your own config. In any case, you’ll have to rename the <code class="docutils literal notranslate"><span class="pre">download</span></code> schema (of the previous <code class="docutils literal notranslate"><span class="pre">downloadform</span></code> database) into <code class="docutils literal notranslate"><span class="pre">downloadform</span></code>, and migrate the tables which were in the public schema of the databases <code class="docutils literal notranslate"><span class="pre">ogcstatistics</span></code> and <code class="docutils literal notranslate"><span class="pre">ldapadmin</span></code> into the newly created schemas.</p></li>
+</ul>
+<p>Example migration script:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">downloadform</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;alter schema download rename to downloadform;&#39;</span>
+
+<span class="n">wget</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">check</span><span class="o">-</span><span class="n">certificate</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">georchestra</span><span class="o">/</span><span class="n">georchestra</span><span class="o">/</span><span class="mf">14.01</span><span class="o">/</span><span class="n">ldapadmin</span><span class="o">/</span><span class="n">database</span><span class="o">.</span><span class="n">sql</span> <span class="o">-</span><span class="n">O</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">ldapadmin</span><span class="o">.</span><span class="n">sql</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">ldapadmin</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">ldapadmin</span><span class="o">.</span><span class="n">sql</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">ldapadmin</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;GRANT ALL PRIVILEGES ON SCHEMA ldapadmin TO &quot;georchestra&quot;;&#39;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">ldapadmin</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO &quot;georchestra&quot;;&#39;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">ldapadmin</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ldapadmin TO &quot;georchestra&quot;;&#39;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">ldapadmin</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;insert into ldapadmin.user_token (uid, token, creation_date) select uid, token, creation_date from public.user_token;&#39;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">ldapadmin</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;drop table public.user_token;&#39;</span>
+
+<span class="n">wget</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">check</span><span class="o">-</span><span class="n">certificate</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">georchestra</span><span class="o">/</span><span class="n">georchestra</span><span class="o">/</span><span class="mf">14.01</span><span class="o">/</span><span class="n">ogc</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">statistics</span><span class="o">/</span><span class="n">database</span><span class="o">.</span><span class="n">sql</span> <span class="o">-</span><span class="n">O</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">ogcstatistics</span><span class="o">.</span><span class="n">sql</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">ogcstatistics</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">ogcstatistics</span><span class="o">.</span><span class="n">sql</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">ogcstatistics</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;GRANT ALL PRIVILEGES ON SCHEMA ogcstatistics TO &quot;georchestra&quot;;&#39;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">ogcstatistics</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ogcstatistics TO &quot;georchestra&quot;;&#39;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">ogcstatistics</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ogcstatistics TO &quot;georchestra&quot;;&#39;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">ogcstatistics</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;insert into ogcstatistics.ogc_services_log (id, user_name, date, service, layer, request, org) select id, user_name, date, service, layer, request, org from public.ogc_services_log;&#39;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">ogcstatistics</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;drop table public.ogc_services_log;&#39;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>download form: the module is disabled by default (<code class="docutils literal notranslate"><span class="pre">shared.download_form.activated=false</span></code>). Be sure to set the value you want in your shared.maven.filters file.</p></li>
+<li><p>extractorapp:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">BUFFER_VALUES</span></code> has changed. If you had a custom value in your GEOR_custom.js file, you have to modify it according to the new syntax.</p></li>
+<li><p>the <code class="docutils literal notranslate"><span class="pre">geobretagne_production</span></code> env variable has been removed - see <a class="reference external" href="https://github.com/georchestra/georchestra/pull/97">#97</a></p></li>
+</ul>
+</li>
+<li><p>geoserver: be sure to set the <code class="docutils literal notranslate"><span class="pre">file.encoding</span></code> tomcat option for geoserver to interpret correctly UTF-8 SLDs (read <span class="xref myst">how</span>).</p></li>
+<li><p>ldapadmin:</p>
+<ul>
+<li><p>accessing <code class="docutils literal notranslate"><span class="pre">/ldapadmin/privateui/</span></code> is now restricted to members of the <code class="docutils literal notranslate"><span class="pre">MOD_LDAPADMIN</span></code> group. It is recommended that only members of the <code class="docutils literal notranslate"><span class="pre">ADMINISTRATOR</span></code> or <code class="docutils literal notranslate"><span class="pre">SV_ADMIN</span></code> administrative groups belong to <code class="docutils literal notranslate"><span class="pre">MOD_LDAPADMIN</span></code>, since this group allows privileges escalation.</p></li>
+<li><p>new <code class="docutils literal notranslate"><span class="pre">shared.ldapadmin.db</span></code> parameter to specify the ldapadmin database name (defaults to “georchestra”).</p></li>
+<li><p>the ldapadmin private app is now accessed via /ldapadmin/privateui/ rather than /ldapadmin/privateui/index.html</p></li>
+</ul>
+</li>
+<li><p>mapfishapp:</p>
+<ul>
+<li><p>geonames now require you to create an account in order to enable queries on their free web services (see <a class="reference external" href="https://github.com/georchestra/georchestra/issues/563">#563</a>). Please change the default account in your profile’s GEOR_custom.js <code class="docutils literal notranslate"><span class="pre">GEONAMES_FILTERS</span></code> variable.</p></li>
+<li><p>addons: custom addons relying on local web services should no longer assume that the application path is <code class="docutils literal notranslate"><span class="pre">/mapfishapp</span></code>. Instead, they should use the new <code class="docutils literal notranslate"><span class="pre">GEOR.config.PATHNAME</span></code> constant, eg <a class="reference external" href="https://github.com/georchestra/georchestra/blob/04017309f3880a0c558537235c92f70a269722d1/mapfishapp/src/main/webapp/app/addons/annotation/js/Annotation.js#L486">here</a>.</p></li>
+<li><p>the app now requires a dedicated database schema, please refer to the <span class="xref myst">INSTALL.md</span> documentation.</p></li>
+<li><p>new config option: <code class="docutils literal notranslate"><span class="pre">SEND_MAP_TO</span></code> for <a class="reference external" href="https://github.com/georchestra/georchestra/issues/443">#443</a>, please read the <a class="reference external" href="https://github.com/georchestra/template/blob/34496d62701e809c80235275a9e2a0b4b46f1123/mapfishapp/app/js/GEOR_custom.js#L583">doc</a>.</p></li>
+<li><p>new config option: <code class="docutils literal notranslate"><span class="pre">FORCE_LOGIN_IN_TOOLBAR</span></code></p></li>
+<li><p>the <code class="docutils literal notranslate"><span class="pre">NS_EDIT</span></code> config option has been removed, and mapfishapp/edit is no longer routed. By default, all layers served by the platform geoserver are editable (see <code class="docutils literal notranslate"><span class="pre">GEOR.custom.EDITABLE_LAYERS</span></code>), provided the user has the rights to (defaults to members of <code class="docutils literal notranslate"><span class="pre">ROLE_ADMINISTRATOR</span></code>, see <code class="docutils literal notranslate"><span class="pre">GEOR.custom.ROLES_FOR_EDIT</span></code>).</p></li>
+<li><p>the contexts referenced in your <code class="docutils literal notranslate"><span class="pre">GEOR.custom.CONTEXTS</span></code> array are now able to reference layers with their full attribution information (text, logo &amp; link). Have a look at the provided <a class="reference external" href="https://github.com/georchestra/template/blob/55f24c8625e737d0b4567db92966c98502578766/mapfishapp/default.wmc#L39">default.wmc</a>.</p></li>
+<li><p>print: some parameters have changed when the print module was updated: <code class="docutils literal notranslate"><span class="pre">maxIconWidth</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">iconMaxWidth</span></code>, <code class="docutils literal notranslate"><span class="pre">maxIconHeight</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">iconMaxHeight</span></code> (see <a class="reference external" href="https://github.com/georchestra/template/commit/e6231c8cbf325dfa2bf96fcaa14096fc0c64ab89">e6231c</a>).</p></li>
+</ul>
+</li>
+<li><p>ogcservstatistics - disabled by default: <code class="docutils literal notranslate"><span class="pre">shared.ogc.statistics.activated=false</span></code>. Be sure to set the value you want in your shared.maven.filters file.</p></li>
+<li><p>static: the “static” module has been renamed into “header”: your deployment scripts <em>must</em> be adapted, as well as your apache2 configuration (or any other reverse proxy).</p></li>
+</ul>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/14.01/README.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

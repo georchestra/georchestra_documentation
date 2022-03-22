@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>UPGRADING from 16.12 to 17.12 &#8212; Python  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="upgrading-from-16-12-to-17-12">
+<h1>UPGRADING from 16.12 to 17.12<a class="headerlink" href="#upgrading-from-16-12-to-17-12" title="Permalink to this headline">¶</a></h1>
+<p>This is work-in-progress - please contribute to this documentation, by submitting pull requests.</p>
+<section id="database">
+<h2>Database<a class="headerlink" href="#database" title="Permalink to this headline">¶</a></h2>
+<section id="ogcstatistics-schema">
+<h3>ogcstatistics schema<a class="headerlink" href="#ogcstatistics-schema" title="Permalink to this headline">¶</a></h3>
+<p>In order to increase SQL query speed on the <code class="docutils literal notranslate"><span class="pre">ogcstatistics</span></code> schema, we added
+several indexes to the database: one on the <code class="docutils literal notranslate"><span class="pre">user_name</span></code> and <code class="docutils literal notranslate"><span class="pre">date</span></code> columns for
+all the tables located in the <code class="docutils literal notranslate"><span class="pre">ogcstatics.ogc_services_log</span></code> partition, except
+for the last one. The last table receives new inserts, so adding an index there
+would lower performances.</p>
+<p>To automatically create these new indexes, you should update the
+<code class="docutils literal notranslate"><span class="pre">get_partition_table()</span></code> procedure, using the <code class="docutils literal notranslate"><span class="pre">update-ogc-server-statistics.sql</span></code>
+file.</p>
+<p>For tables that were already present in your database, you should manually index
+them, using the following queries. You have to adapt table names based on the
+current state of your database.</p>
+<p>For example, to create indexes on the table that holds stats for october 2016:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">ogc_services_log_y2016m10_user_name_idx</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">ogcstatistics</span><span class="p">.</span><span class="n">ogc_services_log_y2016m10</span><span class="w"> </span><span class="p">(</span><span class="n">user_name</span><span class="p">);</span><span class="w"></span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">ogc_services_log_y2016m10_date_idx</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">ogcstatistics</span><span class="p">.</span><span class="n">ogc_services_log_y2016m10</span><span class="w"> </span><span class="p">(</span><span class="nb">date</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>You should create these indexes for all tables except for the current month.</p>
+</section>
+<section id="geonetwork-schema">
+<h3>geonetwork schema<a class="headerlink" href="#geonetwork-schema" title="Permalink to this headline">¶</a></h3>
+<p>TODO (please ask the mailing list in the mean time)</p>
+</section>
+</section>
+<section id="sources">
+<h2>Sources<a class="headerlink" href="#sources" title="Permalink to this headline">¶</a></h2>
+<p>Due to submodule changes, upgrading your sources repository involves the following commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">fetch</span> <span class="n">origin</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="mf">17.12</span>
+<span class="n">git</span> <span class="n">submodule</span> <span class="n">sync</span> <span class="o">--</span><span class="n">recursive</span>
+<span class="n">git</span> <span class="n">submodule</span> <span class="n">update</span> <span class="o">--</span><span class="n">init</span> <span class="o">--</span><span class="n">recursive</span> <span class="o">--</span><span class="n">force</span>
+</pre></div>
+</div>
+</section>
+<section id="geoserver-notes-for-tomcat-users">
+<h2>GeoServer - Notes for tomcat users<a class="headerlink" href="#geoserver-notes-for-tomcat-users" title="Permalink to this headline">¶</a></h2>
+<p>the default Context attribute <code class="docutils literal notranslate"><span class="pre">useRelativeRedirects</span></code> seems to have changed from
+<code class="docutils literal notranslate"><span class="pre">false</span></code> to <code class="docutils literal notranslate"><span class="pre">true</span></code> in the new versions of Tomcat, making the redirections from
+the GeoServer UI fail.</p>
+<p>You will have to manually adapt your tomcat configuration to add the following in your <code class="docutils literal notranslate"><span class="pre">context.xml</span></code> file:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;Context</span> <span class="na">useRelativeRedirects=</span><span class="s">&quot;false&quot;</span><span class="nt">&gt;</span>
+</pre></div>
+</div>
+<p>Forgetting to adjust your configuration will result in a unusable GeoServer UI.
+The first version of the HTTP specicifications required an absolute URL to be
+passed to the <code class="docutils literal notranslate"><span class="pre">Location</span></code> header, but since most browsers tolerate a relative
+URL, this constraint has been relaxed in the new version of the specifications.</p>
+<p>Nevertheless we preferred to keep the same behaviour across the servlet
+containers used in the geOrchestra community (mainly jetty and tomcat), and we
+actually require an absolute URL so that the Security-Proxy is able to rewrite
+these to point to a coherent destination.</p>
+</section>
+<section id="ldapadmin">
+<h2>LDAPadmin<a class="headerlink" href="#ldapadmin" title="Permalink to this headline">¶</a></h2>
+<p>URLs generated by the client app are now routable with the following Apache rewrite rules:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>RewriteCond %{REQUEST_URI} !^/ldapadmin/console/public/.*$
+RewriteCond %{REQUEST_URI} ^/ldapadmin/console/([home|users|org|orgs|groups|logs|analytics].*)$
+RewriteRule .* /ldapadmin/console/#/%1 [NE,R,L]
+</pre></div>
+</div>
+</section>
+<section id="geonetwork">
+<h2>GeoNetwork<a class="headerlink" href="#geonetwork" title="Permalink to this headline">¶</a></h2>
+<p>To preserve permalinks, an Apache 2.4 configuration:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Location</span> <span class="s2">&quot;/geonetwork&quot;</span><span class="o">&gt;</span>
+	<span class="n">RewriteEngine</span> <span class="n">on</span>
+	<span class="n">RewriteCond</span> <span class="s2">&quot;%</span><span class="si">{REQUEST_URI}</span><span class="s2">&quot;</span> <span class="s2">&quot;/geonetwork/apps/georchestra/&quot;</span>
+	<span class="n">RewriteCond</span> <span class="s2">&quot;%</span><span class="si">{QUERY_STRING}</span><span class="s2">&quot;</span> <span class="s2">&quot;(.*(?:^|&amp;))uuid=([^&amp;]*)&amp;?(.*)&amp;?$&quot;</span>
+	<span class="n">RewriteRule</span> <span class="s2">&quot;(.*)&quot;</span> <span class="s2">&quot;/geonetwork/srv/eng/catalog.search#/metadata/%2&quot;</span> <span class="p">[</span><span class="n">R</span><span class="o">=</span><span class="mi">302</span><span class="p">,</span><span class="n">NE</span><span class="p">,</span><span class="n">QSD</span><span class="p">,</span><span class="n">L</span><span class="p">]</span>
+<span class="o">&lt;/</span><span class="n">Location</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/17.12/README.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

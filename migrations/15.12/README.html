@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>UPGRADING from 15.06 to 15.12 &#8212; Python  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="upgrading-from-15-06-to-15-12">
+<h1>UPGRADING from 15.06 to 15.12<a class="headerlink" href="#upgrading-from-15-06-to-15-12" title="Permalink to this headline">¶</a></h1>
+<p>When upgrading your instance, you need to choose between the following alternatives:</p>
+<ul class="simple">
+<li><p>you can go on compiling from the sources, using a “config directory” deriving from the <a class="reference external" href="https://github.com/georchestra/template">georchestra/template</a> repository we provide (using branch 15.12 !),</p></li>
+<li><p>you can use the generic WARs we provide on <a class="reference external" href="http://build.georchestra.org/wars/">build.georchestra.org/wars</a>,</p></li>
+<li><p>you can use the packages we provide for Debian, CentOS or RedHat on <a class="reference external" href="http://build.georchestra.org/">build.georchestra.org</a>,</p></li>
+<li><p>you can build on the docker images we provide on <a class="reference external" href="https://hub.docker.com/r/georchestra/">hub.docker.com</a>.</p></li>
+</ul>
+<p>Generic WARs expect to find their configuration in a folder, typically bootstrapped from the content of the <a class="reference external" href="https://github.com/georchestra/datadir/">georchestra/datadir</a> repository (branch 15.12 !).
+This folder will generally be <code class="docutils literal notranslate"><span class="pre">/etc/georchestra</span></code> and the webapps will be aware of this location through the use of the tomcat additional parameter <code class="docutils literal notranslate"><span class="pre">-Dgeorchestra.datadir=/etc/georchestra</span></code>.</p>
+<p>Packages provide:</p>
+<ul class="simple">
+<li><p>the WAR files, typically in <code class="docutils literal notranslate"><span class="pre">/usr/share/lib/georchestra-MODULENAME/</span></code>,</p></li>
+<li><p>their own copy of the <code class="docutils literal notranslate"><span class="pre">/etc/georchestra</span></code> folder.
+If using packages, it is your responsibility to symlink WAR files in your tomcat <code class="docutils literal notranslate"><span class="pre">webapps</span></code> folder, for automatic deployment of the webapps.</p></li>
+</ul>
+<p>Keep in mind that the default configurations (either “template config” or “data dir”) consider that geOrchestra runs on a SSL-enabled server. If this is not the case, please check carefully your datadir with <a class="reference external" href="https://github.com/georchestra/georchestra/issues/1123">#1123</a> in mind.</p>
+<ul class="simple">
+<li><p>Mapfishapp has been revamped to allow dynamic customization of addons and contexts. This means that 2 new controllers are now responsible of the JSON blocks that were previously present in the GEOR_custom.js file. As a result, it introduced some stricter conventions that have to be respected so that the controllers can function correctly:</p>
+<ul>
+<li><p>Contexts: in “datadir-mode” (ie with the <code class="docutils literal notranslate"><span class="pre">-Dgeorchestra.datadir</span></code> parameter), contexts should be uploaded to <code class="docutils literal notranslate"><span class="pre">&lt;georchestra.datadir&gt;/mapfishapp/contexts/context.wmc</span></code> along with a picture (<code class="docutils literal notranslate"><span class="pre">&lt;georchestra.datadir&gt;/mapfishapp/contexts/images/context.jpg</span></code> or <code class="docutils literal notranslate"><span class="pre">.png</span></code>). Contexts belonging to the webapp (as a result of compilation, for instance) are also taken into account by the controller (in the contexts/ subdirectory).</p></li>
+</ul>
+</li>
+</ul>
+<p>Imagine you had one context referenced in your GEOR_custom.js as such:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>     <span class="nx">CONTEXTS</span><span class="o">:</span> <span class="p">[{</span>
+         <span class="nx">label</span><span class="o">:</span> <span class="s2">&quot;My context&quot;</span><span class="p">,</span>
+         <span class="nx">thumbnail</span><span class="o">:</span> <span class="s2">&quot;app/img/contexts/osm.png&quot;</span><span class="p">,</span>
+         <span class="nx">wmc</span><span class="o">:</span> <span class="s2">&quot;default.wmc&quot;</span><span class="p">,</span>
+         <span class="nx">tip</span><span class="o">:</span> <span class="s2">&quot;A unique OSM layer&quot;</span><span class="p">,</span>
+         <span class="nx">keywords</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;background&quot;</span><span class="p">]</span>
+     <span class="p">},{</span>
+         <span class="p">...</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">label</span></code>, <code class="docutils literal notranslate"><span class="pre">tip</span></code> and <code class="docutils literal notranslate"><span class="pre">keywords</span></code> fields are now dynamically extracted from the context file.
+As a result, the <code class="docutils literal notranslate"><span class="pre">default.wmc</span></code> file should be edited to integrate the <code class="docutils literal notranslate"><span class="pre">Title</span></code> (matches <code class="docutils literal notranslate"><span class="pre">label</span></code>), <code class="docutils literal notranslate"><span class="pre">Abstract</span></code> (matches <code class="docutils literal notranslate"><span class="pre">tip</span></code>) and <code class="docutils literal notranslate"><span class="pre">Keywords</span></code> (matches <code class="docutils literal notranslate"><span class="pre">keywords</span></code>) strings, eg:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="nt">&lt;ViewContext</span> <span class="na">xmlns=</span><span class="s">&quot;http://www.opengis.net/context&quot;</span> <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="na">version=</span><span class="s">&quot;1.1.0&quot;</span> <span class="na">id=</span><span class="s">&quot;default&quot;</span> <span class="na">xsi:schemaLocation=</span><span class="s">&quot;http://www.opengis.net/context http://schemas.opengis.net/context/1.1.0/context.xsd&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;General&gt;</span>
+    <span class="nt">&lt;Window</span> <span class="na">width=</span><span class="s">&quot;1373&quot;</span> <span class="na">height=</span><span class="s">&quot;709&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;BoundingBox</span> <span class="na">minx=</span><span class="s">&quot;455462.822367389977&quot;</span> <span class="na">miny=</span><span class="s">&quot;6838526.51230099984&quot;</span> <span class="na">maxx=</span><span class="s">&quot;875255.821295570000&quot;</span> <span class="na">maxy=</span><span class="s">&quot;7055302.35806940030&quot;</span> <span class="na">SRS=</span><span class="s">&quot;EPSG:2154&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;Title&gt;</span>My context<span class="nt">&lt;/Title&gt;</span>
+    <span class="nt">&lt;Abstract&gt;</span>A unique OSM layer<span class="nt">&lt;/Abstract&gt;</span>
+    <span class="nt">&lt;KeywordList&gt;</span>
+      <span class="nt">&lt;Keyword&gt;</span>background<span class="nt">&lt;/Keyword&gt;</span>
+    <span class="nt">&lt;/KeywordList&gt;</span>
+</pre></div>
+</div>
+<ul>
+<li><p>Addons: in “datadir-mode”, they need to be stored either in <code class="docutils literal notranslate"><span class="pre">&lt;georchestra.datadir&gt;/mapfishapp/addons/</span></code> (recommended) or in the <code class="docutils literal notranslate"><span class="pre">app/addons/</span></code> subdirectory of the webapp. Without the georchestra.datadir parameter, only the ones belonging to the webapp are taken into account.</p></li>
+<li><p>As a result of <a class="reference external" href="https://github.com/georchestra/georchestra/pull/1040">#1040</a>, LDAP groups are now <code class="docutils literal notranslate"><span class="pre">groupOfMembers</span></code> instances rather than <code class="docutils literal notranslate"><span class="pre">groupOfNames</span></code> instances. In addition, the <code class="docutils literal notranslate"><span class="pre">PENDING_USERS</span></code> group was renamed to <code class="docutils literal notranslate"><span class="pre">PENDING</span></code>. You have to migrate your LDAP tree, according to the following procedure (please change the <code class="docutils literal notranslate"><span class="pre">dc=georchestra,dc=org</span></code> string for your own base DN and provide a suitable password):</p>
+<ul class="simple">
+<li><p>dump your ldap <strong>groups</strong> with:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ldapsearch</span> <span class="o">-</span><span class="n">H</span> <span class="n">ldap</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">389</span> <span class="o">-</span><span class="n">xLLL</span> <span class="o">-</span><span class="n">D</span> <span class="s2">&quot;cn=admin,dc=georchestra,dc=org&quot;</span> <span class="o">-</span><span class="n">w</span> <span class="n">your_ldap_password</span> <span class="o">-</span><span class="n">b</span> <span class="s2">&quot;ou=groups,dc=georchestra,dc=org&quot;</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">groups</span><span class="o">.</span><span class="n">ldif</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>migration:</p></li>
+</ul>
+</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="s1">&#39;s/PENDING_USERS/PENDING/&#39;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">groups</span><span class="o">.</span><span class="n">ldif</span>
+<span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="s1">&#39;s/groupOfNames/groupOfMembers/&#39;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">groups</span><span class="o">.</span><span class="n">ldif</span>
+<span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="s1">&#39;/fakeuser/d&#39;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">groups</span><span class="o">.</span><span class="n">ldif</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>load the <span class="xref myst">groupOfMembers</span> definition:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="n">sudo</span> <span class="n">ldapadd</span> <span class="o">-</span><span class="n">Y</span> <span class="n">EXTERNAL</span> <span class="o">-</span><span class="n">H</span> <span class="n">ldapi</span><span class="p">:</span><span class="o">///</span> <span class="o">-</span><span class="n">f</span> <span class="n">groupofmembers</span><span class="o">.</span><span class="n">ldif</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>drop your groups organizationalUnit (<code class="docutils literal notranslate"><span class="pre">ou</span></code>)</p></li>
+<li><p>import the updated groups.ldif file.</p></li>
+<li><p>As a result of <a class="reference external" href="https://github.com/georchestra/georchestra/issues/1108">#1108</a> and <a class="reference external" href="https://github.com/georchestra/georchestra/issues/556">#556</a>, the ogc-server-statistics model has been changed. To upgrade your database, you should follow this procedure:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">georchestra</span><span class="o">/</span><span class="n">georchestra</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">migrations</span><span class="o">/</span><span class="mf">15.12</span><span class="o">/</span><span class="n">populate_stats_roles</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>In this script, change the values of the following variables according to your configuration: LDAP_URI, BIND_WITH_CREDENTIALS, LDAP_BINDDN, LDAP_PASSWD, GROUPS_DN, GROUP_OBJECT_CLASS.</p>
+<p>Create a virtual env for python :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">virtualenv</span> <span class="n">migr</span><span class="o">-</span><span class="n">ogcstatistics</span>
+<span class="n">cd</span> <span class="n">migr</span><span class="o">-</span><span class="n">ogcstatistics</span><span class="o">/</span>
+<span class="n">source</span> <span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+<span class="n">easy_install</span> <span class="n">ldap3</span>
+</pre></div>
+</div>
+<p>Then run the script:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">populate_stats_roles</span><span class="o">.</span><span class="n">py</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">ogc</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">statistics</span><span class="o">-</span><span class="n">migration</span><span class="o">.</span><span class="n">sql</span>
+</pre></div>
+</div>
+<p>Check the sql migration file looks good.</p>
+<p>Next step is to execute the two migration scripts:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">georchestra</span><span class="o">/</span><span class="n">georchestra</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">migrations</span><span class="o">/</span><span class="mf">15.12</span><span class="o">/</span><span class="n">update_to_1512</span><span class="o">.</span><span class="n">sql</span> <span class="o">-</span><span class="n">O</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">update_to_1512</span><span class="o">.</span><span class="n">sql</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">update_to_1512</span><span class="o">.</span><span class="n">sql</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">ogc</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">statistics</span><span class="o">-</span><span class="n">migration</span><span class="o">.</span><span class="n">sql</span>
+</pre></div>
+</div>
+<p>Please note that the <code class="docutils literal notranslate"><span class="pre">ogc-server-statistics-migration.sql</span></code> script might take a very long time, depending on your database size.</p>
+<p>Finally, ensure geOrchestra database user is owner of database. If your database is dedicated to geOrchestra (no other
+apps are running in same database), you can use following procedure to reset ownership of all objects to selected user, for
+example <code class="docutils literal notranslate"><span class="pre">georchestra</span></code> :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">georchestra</span><span class="o">/</span><span class="n">georchestra</span><span class="o">/</span><span class="mf">15.12</span><span class="o">/</span><span class="n">postgresql</span><span class="o">/</span><span class="n">fix</span><span class="o">-</span><span class="n">owner</span><span class="o">.</span><span class="n">sql</span> <span class="o">-</span><span class="n">O</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">fix</span><span class="o">-</span><span class="n">owner</span><span class="o">.</span><span class="n">sql</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">fix</span><span class="o">-</span><span class="n">owner</span><span class="o">.</span><span class="n">sql</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;SELECT change_owner(&#39;mapfishapp&#39;, &#39;georchestra&#39;);&quot;</span><span class="p">;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;SELECT change_owner(&#39;downloadform&#39;, &#39;georchestra&#39;);&quot;</span><span class="p">;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;SELECT change_owner(&#39;ldapadmin&#39;, &#39;georchestra&#39;);&quot;</span><span class="p">;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;SELECT change_owner(&#39;ogcstatistics&#39;, &#39;georchestra&#39;);&quot;</span><span class="p">;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;SELECT change_owner(&#39;public&#39;, &#39;georchestra&#39;);&quot;</span><span class="p">;</span>
+<span class="c1"># if you deploy geonetwork :</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;SELECT change_owner(&#39;geonetwork&#39;, &#39;geonetwork&#39;);&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>And if you deploy geofence :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;SELECT change_owner(&#39;geofence&#39;, &#39;georchestra&#39;);&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Finally, you can drop maintenance function :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;DROP FUNCTION change_owner(text, text);&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/15.12/README.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

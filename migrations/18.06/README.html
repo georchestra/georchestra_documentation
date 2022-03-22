@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>From 17.12 to 18.06 &#8212; Python  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="from-17-12-to-18-06">
+<h1>From 17.12 to 18.06<a class="headerlink" href="#from-17-12-to-18-06" title="Permalink to this headline">¶</a></h1>
+<p>With <a class="reference external" href="https://github.com/georchestra/georchestra/pull/1902">#1902</a>, the security-proxy dependencies have been updated. As a consequence, <strong>Java 8 is now mandatory</strong> (at least for the servlet container running the security-proxy).</p>
+<section id="url-pattern-changes">
+<h2>URL pattern changes<a class="headerlink" href="#url-pattern-changes" title="Permalink to this headline">¶</a></h2>
+<p>First of all, you should note that the <code class="docutils literal notranslate"><span class="pre">ldapadmin</span></code> webapp was renamed into <code class="docutils literal notranslate"><span class="pre">console</span></code>.
+Also, with <a class="reference external" href="https://github.com/georchestra/georchestra/issues/1924">#1924</a>, the admin console path changed from <code class="docutils literal notranslate"><span class="pre">/ldapadmin/console/</span></code> to <code class="docutils literal notranslate"><span class="pre">/console/manager/</span></code>.</p>
+<p>The extractorapp UI has been removed and replaced with a viewer addon (which makes sense to not duplicate viewing efforts).
+Users may still requests extractions, provided the extractorapp webapp is installed and the extractor addon activated. Forcing this addon to load on viewer startup may be achieved using eg <code class="docutils literal notranslate"><span class="pre">/mapfishapp/?addons=extractor_0</span></code>.</p>
+<p>With <a class="reference external" href="https://github.com/georchestra/georchestra/pull/1902">#1902</a>, the security-proxy has been refactored. As a consequence:</p>
+<ul class="simple">
+<li><p>the login entrypoint is now <code class="docutils literal notranslate"><span class="pre">/login/cas</span></code> instead of <code class="docutils literal notranslate"><span class="pre">/j_spring_cas_security_check</span></code>,</p></li>
+<li><p>the logout entrypoint is now <code class="docutils literal notranslate"><span class="pre">/logout</span></code>, instead of <code class="docutils literal notranslate"><span class="pre">/j_spring_security_logout</span></code>.</p></li>
+</ul>
+</section>
+<section id="role-changes">
+<h2>ROLE changes<a class="headerlink" href="#role-changes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">MOD_LDAPADMIN</span></code> becomes <code class="docutils literal notranslate"><span class="pre">SUPERUSER</span></code>, to make it clear that users with this role are allmighty.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MOD_ANALYTICS</span></code> does not exist anymore. You should remove it, eventually granting the <code class="docutils literal notranslate"><span class="pre">SUPERUSER</span></code> role to these users.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">MOD_EXTRACTORAPP</span></code> role was renamed into <code class="docutils literal notranslate"><span class="pre">EXTRACTORAPP</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">MOD_EMAILPROXY</span></code> role was renamed into <code class="docutils literal notranslate"><span class="pre">EMAILPROXY</span></code>.</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">ORGADMIN</span></code> role is transparently added by the console to delegated admins. Users having this role are allowed to access the console webapp.</p>
+</section>
+<section id="upgrading-to-recaptcha-v2">
+<h2>Upgrading to ReCaptcha v2<a class="headerlink" href="#upgrading-to-recaptcha-v2" title="Permalink to this headline">¶</a></h2>
+<p>With <a class="reference external" href="https://github.com/georchestra/georchestra/pull/1938">#1938</a> we upgraded ReCaptcha to v2, a mandatory step since v1 has been deprecated by Google. This requires that you generate a new public/private keypair on https://www.google.com/recaptcha/ and update your geOrchestra datadir according to <a class="reference external" href="https://github.com/georchestra/datadir/commit/0ff17b3d2e7fb265dbf64fc0c65f7ee01ef39dea">georchestra/datadir&#64;0ff17b</a></p>
+</section>
+<section id="upgrading-your-datadir">
+<h2>Upgrading your datadir<a class="headerlink" href="#upgrading-your-datadir" title="Permalink to this headline">¶</a></h2>
+<p>Lots of changes happened in the datadir for this release… If you did not customize it deeply, you might be better off starting with a fresh clone of branch 18.06 and apply your changes on top of it.</p>
+<p>If you plan to upgrade your existing datadir (matching version 17.12), here’s a <a class="reference external" href="https://gist.github.com/fvanderbiest/1049126fc13a921f2d9a1adb6f5dc5a1">full diff</a> between 17.12 and 18.06. Remember: we do not recommend this, since chances are high that you miss some of the changes, like:</p>
+<ul class="simple">
+<li><p>ldapadmin renamed into console everywhere in variable names</p></li>
+<li><p>group renamed role in variable names</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">orgsSearchBaseDN</span></code> renamed into <code class="docutils literal notranslate"><span class="pre">orgSearchBaseDN</span></code></p></li>
+<li><p>all connections to the DB are performed with role <code class="docutils literal notranslate"><span class="pre">georchestra</span></code> instead of <code class="docutils literal notranslate"><span class="pre">www-data</span></code></p></li>
+<li><p>public SDI url &amp; header height factorized into default.properties</p></li>
+<li><p>…</p></li>
+</ul>
+<p>As you can see, this release introduces a <a class="reference external" href="https://github.com/georchestra/datadir/blob/master/default.properties">default.properties</a> file at the datadir root, which factorizes variables across apps. It can be omitted, but then, its variables should be replicated in webapp specific properties files.</p>
+<p>Also, the <code class="docutils literal notranslate"><span class="pre">moderatorEmail</span></code> config option from the ldapadmin/console module was removed.
+With <a class="reference external" href="https://github.com/georchestra/georchestra/pull/2124">#2124</a>, moderation emails are now dynamically sent to users having the <code class="docutils literal notranslate"><span class="pre">SUPERUSER</span></code> role (plus Org-scoped admins, if any).</p>
+</section>
+<section id="upgrading-your-databases">
+<h2>Upgrading your databases<a class="headerlink" href="#upgrading-your-databases" title="Permalink to this headline">¶</a></h2>
+<p>Please run the provided <a class="reference download internal" download="" href="../_downloads/ff31cc5c4bc32b73ee7cb380eddde2e7/db_migration.sql"><span class="xref download myst">upgrade from 17.12 to 18.06 SQL script</span></a>, which renames the <code class="docutils literal notranslate"><span class="pre">ldapadmin</span></code> schema and creates the <code class="docutils literal notranslate"><span class="pre">delegation</span></code> table.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/18.06/README.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

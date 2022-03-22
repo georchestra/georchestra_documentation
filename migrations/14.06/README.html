@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>UPGRADING from 14.01 to 14.06 &#8212; Python  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="upgrading-from-14-01-to-14-06">
+<h1>UPGRADING from 14.01 to 14.06<a class="headerlink" href="#upgrading-from-14-01-to-14-06" title="Permalink to this headline">¶</a></h1>
+<p>The way geOrchestra is configured has been streamlined:</p>
+<ul class="simple">
+<li><p>there are <strong>default parameters which are shared by several modules</strong>, in <span class="xref myst">config/shared.maven.filters</span>. A “standard” install should not require you to bother about them. But if your setup is different from the default one, you may have to copy one or more of theses properties into your own shared maven filters (read on), in order to be able to customize them.</p></li>
+<li><p>there are also <strong>shared parameters which have to be customized</strong> for your own instance. These can be found in the <strong>build_support/shared.maven.filters</strong> file inside your own configuration directory. As your config dir inherits from the template config dir, it should be very similar to <a class="reference external" href="https://github.com/georchestra/template/blob/master/build_support/shared.maven.filters">georchestra/template:build_support/shared.maven.filters</a>. The shared maven filters from this file override those from <span class="xref myst">config/shared.maven.filters</span></p></li>
+<li><p>finally, there are <strong>parameters for every individual geOrchestra module</strong> (geoserver, geofence, mapfishapp, extractorapp, proxy, ldapadmin), which can be customized via the <strong>build_support/GenerateConfig.groovy</strong> file in your own config dir. Have a look at the one provided by the template config for an example:  <a class="reference external" href="https://github.com/georchestra/template/blob/master/build_support/GenerateConfig.groovy">georchestra/template:build_support/GenerateConfig.groovy</a>.</p></li>
+</ul>
+<p>As a result, a “standard geOrchestra configuration” should not require you to edit more than 2 files: one for the shared parameters, and an other one for module-specific parameters.<br />
+Note: copying maven.filter files in your own configuration dir (which was an older practice) is not anymore recommended because it is very difficult to maintain when upgrading version.
+=&gt; you should remove any maven.filter file from your own configuration, and eventually copy the values you had customized into build_support/GenerateConfig.groovy</p>
+<p><strong>Build:</strong></p>
+<p>The “Jetty Maven2” Repository provided by oss.sonatype.org requires HTTPS now. The fix was pushed to the georchestra and geonetwork repositories, but in the mean time, your /home/$USER/.m2 local repository might have gotten corrupted with html files rather than jars. If you experience compilation errors, you might need to clean your local maven repo, by running <code class="docutils literal notranslate"><span class="pre">rm</span> <span class="pre">-rf</span> <span class="pre">~/.m2/repository/org/apache/maven</span></code></p>
+<p>Upgrading your build is a 2-steps process.<br />
+Let’s assume your local geOrchestra source code repository is located in <code class="docutils literal notranslate"><span class="pre">/path_to_georchestra_root/</span></code>.</p>
+<p>First you have to update the sources from the remote origin and update yours:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">path_to_georchestra_root</span><span class="o">/</span>
+<span class="n">git</span> <span class="n">fetch</span> <span class="n">origin</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="mf">14.06</span>
+<span class="n">git</span> <span class="n">submodule</span> <span class="n">sync</span>
+<span class="n">git</span> <span class="n">submodule</span> <span class="n">update</span> <span class="o">--</span><span class="n">init</span>
+</pre></div>
+</div>
+<p>Then you need to update your configuration directory to align it with the template configuration, <a class="reference external" href="https://github.com/georchestra/template/tree/14.06">branch 14.06</a>.</p>
+<p>In the following, we assume that your configuration directory is versioned with git, and has the geOrchestra template config set as “upstream” remote repository:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">path_to_georchestra_root</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="n">configuration</span><span class="o">/&lt;</span><span class="n">yours</span><span class="o">&gt;</span>
+<span class="n">git</span> <span class="n">fetch</span> <span class="n">upstream</span>
+<span class="n">git</span> <span class="n">merge</span> <span class="n">upstream</span><span class="o">/</span><span class="mf">14.06</span>
+</pre></div>
+</div>
+<p>Then you’ll probably have to fix some conflicts.<br />
+Note: if you do not know how to fix these conflicts, you’re probably better off starting again with a fresh fork of the template config directory.</p>
+<p>The build process remains unchanged, but there is a difference at the end.<br />
+In the previous releases, the artifacts included a “-private” suffix in their name. We were making the assumption that all WARs would be deployed to the same tomcat.
+This is not the case anymore. This implies that the security proxy now resides in a different servlet container than the proxied webapps. If this is not your case, juste rename them back with the “-private” suffix.</p>
+<p><strong>LDAP:</strong></p>
+<p>The <a class="reference external" href="https://github.com/georchestra/LDAP">LDAP repository</a> holds branches for the 13.09, 14.01 and 14.06 releases.
+In 13.09, groups are instances of posixGroup. From 14.01 to 15.06, they are instances of groupOfNames.
+Since 15.12, they are instances of groupOfMembers which allows to have empty groups.</p>
+<p>Between 14.01 and 14.06 branches, here are the differences:</p>
+<ul class="simple">
+<li><p>the <code class="docutils literal notranslate"><span class="pre">MOD_EXTRACTORAPP</span></code> group was created. You should assign to it the users which already had access to extractorapp (typically members of <code class="docutils literal notranslate"><span class="pre">SV_USER</span></code>)</p></li>
+<li><p>the privileged geoserver user (“shared.privileged.geoserver.user”) was renamed from <code class="docutils literal notranslate"><span class="pre">extractorapp_privileged_admin</span></code> to <code class="docutils literal notranslate"><span class="pre">geoserver_privileged_user</span></code> because it is no more used only for the extractor.</p></li>
+</ul>
+<p><strong>Databases:</strong></p>
+<p>In this release, the GeoNetwork database was merged into the unique default georchestra database.
+It is now a schema inside the main database.</p>
+<p>This change requires that a “geonetwork” db user is created and granted rights:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">createuser</span> <span class="o">-</span><span class="n">SDRIP</span> <span class="n">geonetwork</span> <span class="p">(</span><span class="n">the</span> <span class="n">expected</span> <span class="n">password</span> <span class="k">for</span> <span class="n">the</span> <span class="n">default</span> <span class="n">config</span> <span class="ow">is</span> <span class="s2">&quot;georchestra&quot;</span><span class="p">)</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;CREATE SCHEMA geonetwork;&#39;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;GRANT ALL PRIVILEGES ON SCHEMA geonetwork TO &quot;geonetwork&quot;;&#39;</span>
+</pre></div>
+</div>
+<p>The full migration process is described in <a class="reference external" href="https://github.com/georchestra/georchestra/issues/601#issuecomment-36889319">#601/comment</a>.
+This <a class="reference external" href="https://github.com/georchestra/georchestra/issues/601#issuecomment-36890670">link</a> also provides hints if you prefer to keep your existing 2-databases setup.</p>
+<p><strong>Native libs:</strong></p>
+<p>The GDAL java bindings (gdal.jar) are no more provided by webapps, because this can lead to issues when the native libs are loaded several times in the same servlet container.
+Instead, the bindings should be installed once and for all in a folder accessible by the servlet container.</p>
+<p>Please refer to the documentation relative to <a class="reference external" href="https://github.com/georchestra/georchestra/blob/master/geoserver/NATIVE_LIBS.md">native libs handling in geOrchestra</a>, section “Tomcat configuration”</p>
+<p><strong>Shared maven filters:</strong></p>
+<p>Several previous shared maven filters have been removed because they were not truly shared between modules:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">shared.mapfishapp.docTempDir</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shared.geofence.*</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shared.checkhealth.*</span></code></p></li>
+</ul>
+<p>You’ll find the exact same settings in build_support/GenerateConfig.groovy</p>
+<p><code class="docutils literal notranslate"><span class="pre">shared.geonetwork.dir</span></code> was removed because it was useless</p>
+<p>Seevral shared maven filters were homogeneized:</p>
+<ul class="simple">
+<li><p>shared.psql.ogc.statistics.db becomes shared.ogc.statistics.db</p></li>
+<li><p>shared.psql.download_form.db -&gt; shared.download_form.db</p></li>
+<li><p>shared.psql.geonetwork.db -&gt; shared.geonetwork.db</p></li>
+<li><p>shared.ldapadmin.db</p></li>
+<li><p>shared.geofence.db</p></li>
+</ul>
+<p>Finally, <code class="docutils literal notranslate"><span class="pre">geonetwork.language</span></code> was renamed into <code class="docutils literal notranslate"><span class="pre">shared.geonetwork.language</span></code></p>
+<p><strong>Miscellaneous:</strong></p>
+<p>If you’re using ldapadmin, make sure you’ve setup <a class="reference external" href="http://www.google.com/recaptcha/">ReCaptcha</a> keys for your own domain.<br />
+Hint: search for privateKey in your GenerateConfig.groovy.</p>
+<p>French projections (typically EPSG:2154) have been removed from the extractorapp and mapfishapp config files.<br />
+Be sure to check your GEOR_custom.js files if you need them.</p>
+<p>mapfishapp: <code class="docutils literal notranslate"><span class="pre">GEONETWORK_URL</span></code> was renamed into <code class="docutils literal notranslate"><span class="pre">GEONETWORK_BASE_URL</span></code>.<br />
+Caution: the expected string for this config option has changed too: from eg. “http://geobretagne.fr/geonetwork/srv/fre” to: “http://geobretagne.fr/geonetwork”.</p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/14.06/README.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

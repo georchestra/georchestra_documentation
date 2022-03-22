@@ -1,0 +1,392 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Custom edition form in GeoNetwork &#8212; Python  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="custom-edition-form-in-geonetwork">
+<h1>Custom edition form in GeoNetwork<a class="headerlink" href="#custom-edition-form-in-geonetwork" title="Permalink to this headline">¶</a></h1>
+<p>It is possible to use a custom edition form, for metadata edition, in GeoNetwork. Possible, and even <a class="reference external" href="https://geonetwork-opensource.org/manuals/4.0.x/en/customizing-application/editor-ui/creating-custom-editor.html">documented</a>, but not so simple.</p>
+<p>This document is relying on a real use-case and showing how it was done.</p>
+<p>Geo2france, a French region, asked for a simplified, flat form, close to what people are used to on platforms like CKAN.</p>
+<ul class="simple">
+<li><p>It would target ISO19139 metadata</p></li>
+<li><p>They wanted a limited number of fields.</p></li>
+<li><p>Thesauri would be pre-selected among a limited number of thesauri.</p></li>
+<li><p>the extent would be defined by selecting geo-keywords on a single thesaurus that would regroup all the extents on the territory</p></li>
+<li><p>If a user wanted to add additional fields, he would have to use the classic form editors (simple or advanced).</p></li>
+<li><p>And, of course, the form should behave correctly with existing records.</p></li>
+</ul>
+<p>The expected result would look like this:</p>
+<!-- ![visuel3](gn_custom_form/visuel3.png) -->
+<p><a href="gn_custom_form/visuel3.png"><img src="gn_custom_form/visuel3.png" width="400px"/></a></p>
+<section id="add-an-edition-form">
+<h2>Add an edition form<a class="headerlink" href="#add-an-edition-form" title="Permalink to this headline">¶</a></h2>
+<p>As documented in GeoNetwork’s doc:</p>
+<ul class="simple">
+<li><p>it happens in the schema definition. So the new form will be tied to a given metadata schema.</p></li>
+<li><p>in the schema, it is defined in layout/config-editor.xml</p></li>
+</ul>
+<p>You can add a <em>view</em>:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>    <span class="nt">&lt;view</span> <span class="na">name=</span><span class="s">&quot;g2f-flat-view&quot;</span>
+          <span class="na">upAndDownControlHidden=</span><span class="s">&quot;true&quot;</span>
+          <span class="na">displayTooltips=</span><span class="s">&quot;false&quot;</span>
+          <span class="na">hideTimeInCalendar=</span><span class="s">&quot;true&quot;</span>
+          <span class="na">class=</span><span class="s">&quot;geo2france-view &quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;sidePanel&gt;</span>
+        <span class="nt">&lt;directive</span> <span class="na">data-gn-overview-manager=</span><span class="s">&quot;&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;directive</span> <span class="na">data-gn-onlinesrc-list=</span><span class="s">&quot;&quot;</span>
+                   <span class="na">data-types=</span><span class="s">&quot;onlinesrc|parent|dataset|service|source|sibling|associated|fcats&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/sidePanel&gt;</span>
+
+      <span class="nt">&lt;tab</span> <span class="na">id=</span><span class="s">&quot;flat-form&quot;</span> <span class="na">default=</span><span class="s">&quot;true&quot;</span> <span class="na">mode=</span><span class="s">&quot;flat&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;section&gt;</span>        
+<span class="cm">&lt;!-- here will go your field definitions --&gt;</span>
+        <span class="nt">&lt;/section&gt;</span>
+      <span class="nt">&lt;/tab&gt;</span>
+
+      <span class="nt">&lt;flatModeExceptions&gt;</span>
+        <span class="nt">&lt;for</span> <span class="na">name=</span><span class="s">&quot;gmd:descriptiveKeywords&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;for</span> <span class="na">name=</span><span class="s">&quot;gmd:status&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;for</span> <span class="na">name=</span><span class="s">&quot;gmd:pointOfContact&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;for</span> <span class="na">name=</span><span class="s">&quot;gmd:spatialResolution&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;for</span> <span class="na">name=</span><span class="s">&quot;gmd:denominator&quot;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;for</span> <span class="na">name=</span><span class="s">&quot;gmd:geographicElement&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/flatModeExceptions&gt;</span>
+    <span class="nt">&lt;/view&gt;</span>
+</pre></div>
+</div>
+<p>Defining a class for your form will be very handy, as it can allow you to hack your way around stuff that were not designed for in the editor.</p>
+<section id="make-it-the-default-form">
+<h3>Make it the default form<a class="headerlink" href="#make-it-the-default-form" title="Permalink to this headline">¶</a></h3>
+<p>You will have to change the tab id to “default”. And set another id for the current default form (simple view, on ISO 19139). Default form is determined in https://github.com/geonetwork/core-geonetwork/blob/main/web-ui/src/main/resources/catalog/js/edit/EditorController.js#L208-L231</p>
+</section>
+<section id="flatmodeexceptions">
+<h3>flatModeExceptions<a class="headerlink" href="#flatmodeexceptions" title="Permalink to this headline">¶</a></h3>
+<p>They list the tags that GN will not try to “flatten”, i.e. it will keep the complexity in their display. To keep interactive widgets like keyword selector, spatial resolution, point of contact selector, you have to not flatten them.</p>
+<p>But in case you want a flat, aligned form, it will make things more complicated. Just saying.</p>
+</section>
+<section id="add-some-fields">
+<h3>Add some fields<a class="headerlink" href="#add-some-fields" title="Permalink to this headline">¶</a></h3>
+<p>If you use the code above, you should get an empty form. Not very useful. So you’ll want to add some fields.</p>
+<section id="simple-fields">
+<h4>Simple fields<a class="headerlink" href="#simple-fields" title="Permalink to this headline">¶</a></h4>
+<p>In the <code class="docutils literal notranslate"><span class="pre">&lt;section&gt;</span></code> block above, you will add simple fields like the title and abstract</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;field</span> <span class="na">xpath=</span><span class="s">&quot;/gmd:MD_Metadata/gmd:identificationInfo/*/gmd:citation/*/gmd:title&quot;</span><span class="nt">/&gt;</span>
+
+<span class="nt">&lt;field</span> <span class="na">xpath=</span><span class="s">&quot;/gmd:MD_Metadata/gmd:identificationInfo/*/gmd:abstract&quot;</span><span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>If you want to override the fields’ names, you can define a <code class="docutils literal notranslate"><span class="pre">name</span></code> attribute:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;field</span> <span class="na">name=</span><span class="s">&quot;g2f-title&quot;</span>
+       <span class="na">xpath=</span><span class="s">&quot;/gmd:MD_Metadata/gmd:identificationInfo/*/gmd:citation/*/gmd:title&quot;</span><span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>and add a corresponding string definition in your schema, in loc/[lang]/strings.xml</p>
+</section>
+<section id="add-textual-information-below-the-field">
+<h4>Add textual information below the field<a class="headerlink" href="#add-textual-information-below-the-field" title="Permalink to this headline">¶</a></h4>
+<p>You can also add some help information by using the <code class="docutils literal notranslate"><span class="pre">text</span></code> tag:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;text</span> <span class="na">ref=</span><span class="s">&quot;g2f-title-help&quot;</span><span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>and add a corresponding string definition in your schema, in loc/[lang]/strings.xml
+This is particularly interesting because you are allowed to use HTML content in <code class="docutils literal notranslate"><span class="pre">text</span></code> tags. This will be used later to hack our way through, to get the layout shon above.
+For instance, the title-help could look like</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span> <span class="nt">&lt;g2f-title-help&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;row field-helper&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;col-sm-2&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;col-sm-10&quot;</span><span class="nt">&gt;</span>Un titre explicite qui aide à identifier la donnée<span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/g2f-title-help&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="add-a-button-if-the-field-is-not-already-present-in-the-model-metadata-record">
+<h4>Add a button if the field is not already present in the model/metadata record<a class="headerlink" href="#add-a-button-if-the-field-is-not-already-present-in-the-model-metadata-record" title="Permalink to this headline">¶</a></h4>
+<p>When editing a metadata record, it will happen that one of the fields that you want to display is not already present in the record. You can then configure your field to display an <code class="docutils literal notranslate"><span class="pre">add</span></code> button, that will add the xml snippet in the record
+For instance, for the gmd:status field, it would look like:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;field</span> <span class="na">xpath=</span><span class="s">&quot;/gmd:MD_Metadata/gmd:identificationInfo/*/gmd:status&quot;</span>
+       <span class="na">or=</span><span class="s">&quot;status&quot;</span>
+        <span class="na">in=</span><span class="s">&quot;/gmd:MD_Metadata/gmd:identificationInfo/*&quot;</span>
+        <span class="na">if=</span><span class="s">&quot;count(/gmd:MD_Metadata/gmd:identificationInfo/*/gmd:status) = 0&quot;</span>
+<span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p><img alt="add-button" src="../_images/add-button.png" /></p>
+</section>
+<section id="add-the-pointofcontact-block">
+<h4>Add the PointofContact block<a class="headerlink" href="#add-the-pointofcontact-block" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;field</span> <span class="na">xpath=</span><span class="s">&quot;/gmd:MD_Metadata/gmd:identificationInfo/*/gmd:pointOfContact&quot;</span>
+       <span class="na">or=</span><span class="s">&quot;pointOfContact&quot;</span> <span class="na">in=</span><span class="s">&quot;/gmd:MD_Metadata/gmd:identificationInfo/*&quot;</span><span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>but you won’t be able to override easily the name of the block if you want to.
+The way I found was to add a <code class="docutils literal notranslate"><span class="pre">&lt;text</span> <span class="pre">ref=&quot;g2f-label-override-poc&quot;/&gt;</span></code> tag and do some heavy css hack.</p>
+</section>
+<section id="add-a-selector-for-a-single-fixed-thesaurus">
+<h4>Add a selector for a single, fixed, thesaurus<a class="headerlink" href="#add-a-selector-for-a-single-fixed-thesaurus" title="Permalink to this headline">¶</a></h4>
+<p>You can, in the field’s xpath expression, select a single thesaurus: the selector widget will then restrict to a given thesaurus. For instance, with GEMET, it would look like</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;field</span> <span class="na">xpath=</span><span class="s">&quot;/gmd:MD_Metadata/gmd:identificationInfo/*/gmd:descriptiveKeywords[*/gmd:thesaurusName/*/gmd:title/*/text() = &#39;GEMET&#39;]&quot;</span><span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>But if you want to show a button in the case where the GEMET thesaurus was not present in an existing record, it will need a stronger configuration: you can use an <code class="docutils literal notranslate"><span class="pre">action</span></code> tag of type <code class="docutils literal notranslate"><span class="pre">add</span></code>, that will, if the button is clicked, insert an XML snippet in the record:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;field</span> <span class="na">xpath=</span><span class="s">&quot;/gmd:MD_Metadata/gmd:identificationInfo/*/gmd:descriptiveKeywords[*/gmd:thesaurusName/*/gmd:title/*/text() = &#39;GEMET&#39;]&quot;</span><span class="nt">/&gt;</span>
+
+<span class="nt">&lt;action</span> <span class="na">type=</span><span class="s">&quot;add&quot;</span> <span class="na">btnLabel=</span><span class="s">&quot;g2f-add-keyword&quot;</span>
+        <span class="na">if=</span><span class="s">&quot;count(/gmd:MD_Metadata/gmd:identificationInfo/*/gmd:descriptiveKeywords[*/gmd:thesaurusName/*/gmd:title/*/text() = &#39;GEMET&#39;]) = 0&quot;</span>
+        <span class="na">or=</span><span class="s">&quot;descriptiveKeywords&quot;</span>
+        <span class="na">in=</span><span class="s">&quot;/gmd:MD_Metadata/gmd:identificationInfo/*&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;template&gt;</span>
+    <span class="nt">&lt;snippet&gt;</span>
+      <span class="nt">&lt;gmd:descriptiveKeywords&gt;</span>
+        <span class="nt">&lt;gmd:MD_Keywords&gt;</span>
+          <span class="nt">&lt;gmd:type&gt;</span>
+            <span class="nt">&lt;gmd:MD_KeywordTypeCode</span> <span class="na">codeList=</span><span class="s">&quot;http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_KeywordTypeCode&quot;</span>
+                                    <span class="na">codeListValue=</span><span class="s">&quot;theme&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;/gmd:type&gt;</span>
+          <span class="nt">&lt;gmd:thesaurusName&gt;</span>
+            <span class="nt">&lt;gmd:CI_Citation&gt;</span>
+              <span class="nt">&lt;gmd:title&gt;</span>
+                <span class="nt">&lt;gmx:Anchor</span> <span class="na">xlink:href=</span><span class="s">&quot;http://geonetwork-opensource.org/gemet&quot;</span><span class="nt">&gt;</span>GEMET<span class="nt">&lt;/gmx:Anchor&gt;</span>
+              <span class="nt">&lt;/gmd:title&gt;</span>
+              <span class="nt">&lt;gmd:date&gt;</span>
+                <span class="nt">&lt;gmd:CI_Date&gt;</span>
+                  <span class="nt">&lt;gmd:date&gt;</span>
+                    <span class="nt">&lt;gco:Date&gt;</span>2018-08-16<span class="nt">&lt;/gco:Date&gt;</span>
+                  <span class="nt">&lt;/gmd:date&gt;</span>
+                  <span class="nt">&lt;gmd:dateType&gt;</span>
+                    <span class="nt">&lt;gmd:CI_DateTypeCode</span> <span class="na">codeList=</span><span class="s">&quot;http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#CI_DateTypeCode&quot;</span>
+                                         <span class="na">codeListValue=</span><span class="s">&quot;publication&quot;</span><span class="nt">/&gt;</span>
+                  <span class="nt">&lt;/gmd:dateType&gt;</span>
+                <span class="nt">&lt;/gmd:CI_Date&gt;</span>
+              <span class="nt">&lt;/gmd:date&gt;</span>
+              <span class="nt">&lt;gmd:identifier&gt;</span>
+                <span class="nt">&lt;gmd:MD_Identifier&gt;</span>
+                  <span class="nt">&lt;gmd:code&gt;</span>
+                    <span class="nt">&lt;gmx:Anchor</span> <span class="na">xlink:href=</span><span class="s">&quot;http://localhost:8080/geonetwork/srv/api/registries/vocabularies/external.theme.gemet&quot;</span><span class="nt">&gt;</span>geonetwork.thesaurus.external.theme.gemet<span class="nt">&lt;/gmx:Anchor&gt;</span>
+                  <span class="nt">&lt;/gmd:code&gt;</span>
+                <span class="nt">&lt;/gmd:MD_Identifier&gt;</span>
+              <span class="nt">&lt;/gmd:identifier&gt;</span>
+            <span class="nt">&lt;/gmd:CI_Citation&gt;</span>
+          <span class="nt">&lt;/gmd:thesaurusName&gt;</span>
+        <span class="nt">&lt;/gmd:MD_Keywords&gt;</span>
+      <span class="nt">&lt;/gmd:descriptiveKeywords&gt;</span>
+    <span class="nt">&lt;/snippet&gt;</span>
+  <span class="nt">&lt;/template&gt;</span>
+<span class="nt">&lt;/action&gt;</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="style-the-edition-form">
+<h2>Style the edition form<a class="headerlink" href="#style-the-edition-form" title="Permalink to this headline">¶</a></h2>
+<p>Make it <em>not</em> look like another GN edition form is not that easy. Some things are hardcoded and not that much configurable. For instance, to get the point of contact block behave as expected in this use case, it was not easy.</p>
+<section id="override-field-labels">
+<h3>Override field labels<a class="headerlink" href="#override-field-labels" title="Permalink to this headline">¶</a></h3>
+<p>Thesauri labels, for instance, are not translated, so you might want to override them. I used the <code class="docutils literal notranslate"><span class="pre">text</span></code> tag for this, to insert some HTML. And then, hacked some css on top of it</p>
+<p>In config-editor.xml:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;text</span> <span class="na">ref=</span><span class="s">&quot;g2f-label-override-gemet&quot;</span><span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>In strings.xml:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;g2f-label-override-gemet&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;label-override&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;col-sm-2 newlabel&quot;</span><span class="nt">&gt;</span>Generic keywords (Th. GEMET)<span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/g2f-label-override-gemet&gt;</span>
+</pre></div>
+</div>
+<p>In web-ui/main/resources/catalog/views/default/less/gn_editor_default.less:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>form.geo2france-view {
+  ...
+
+  // override a label (thesaurus fields)
+  .label-override div.newlabel,
+  .gn-field &gt; label.control-label {
+    clear:left;
+    float:left;
+    text-align: right;
+    font-weight: bold;
+    font-size: 14px;
+    color: white;
+    //line-height: 40px;
+    //vertical-align:middle;
+    //display:inline;
+  }
+  // and hide base label
+  .label-override + div[data-gn-keyword-selector] label.control-label,
+  .label-override + div.gn-add-field label.control-label
+  {
+    display: none;
+  }
+
+  ...
+}
+</pre></div>
+</div>
+<p>Some hacks were more complicated than others (e.g. point of contact block, or geographic extent’s label)</p>
+</section>
+</section>
+<section id="get-a-2-column-display">
+<h2>Get a 2 column display<a class="headerlink" href="#get-a-2-column-display" title="Permalink to this headline">¶</a></h2>
+<p>I first requires <em>not to</em> use the <code class="docutils literal notranslate"><span class="pre">gn-label-above-input</span></code> class for your view.</p>
+<p>Then, I once again used a <code class="docutils literal notranslate"><span class="pre">text</span></code> tag to introduce some HTML and then style them:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;text</span> <span class="na">ref=</span><span class="s">&quot;g2f-bg&quot;</span><span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>and in loc/[lang]/strings.xml:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>  <span class="nt">&lt;g2f-bg&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;bg&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;col-sm-2 light-bg&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;col-sm-10 no-bg&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/g2f-bg&gt;</span>
+</pre></div>
+</div>
+<p>and some styling.</p>
+</section>
+<section id="use-a-geo-thesaurus-to-define-the-extent">
+<h2>Use a geo-thesaurus to define the extent<a class="headerlink" href="#use-a-geo-thesaurus-to-define-the-extent" title="Permalink to this headline">¶</a></h2>
+<section id="generate-the-thesaurus">
+<h3>Generate the thesaurus<a class="headerlink" href="#generate-the-thesaurus" title="Permalink to this headline">¶</a></h3>
+<p>The thesaurus was expected to contain entries for all administrative levels:</p>
+<ul class="simple">
+<li><p>region</p></li>
+<li><p>departments</p></li>
+<li><p>EPCI (inter-communalities)</p></li>
+<li><p>municipalities</p></li>
+<li><p>PNR (regional natural parcs)</p></li>
+<li><p>SCOT (land use planning)</p></li>
+</ul>
+<p>We had a geopackage containing the geospatial features.
+To collect them, get the envelopes and combine them all in a single thesaurus, I wrote a tool, <a class="reference external" href="https://github.com/pi-geosolutions/vrt2rdf">vrt2rdf</a>: it uses</p>
+<ul class="simple">
+<li><p>a vector VRT to configure the inputs. It provides a lot of flexibility in how to retrieve the data, and abstract away a lot of the specificities about the input formats</p></li>
+<li><p>a short python script retrieves all the features into a list</p></li>
+<li><p>the list is then applied to a jinja2 template, which gives a lot of flexibility on the output side of it.</p></li>
+</ul>
+</section>
+<section id="add-the-thesaurus-in-gn">
+<h3>Add the thesaurus in GN<a class="headerlink" href="#add-the-thesaurus-in-gn" title="Permalink to this headline">¶</a></h3>
+<p>You will have to add it, in the thesaurus configuration page, in the admin console. Don’t forget to import it as a <strong>Place</strong> thesaurus</p>
+</section>
+<section id="add-it-in-the-form">
+<h3>Add it in the form<a class="headerlink" href="#add-it-in-the-form" title="Permalink to this headline">¶</a></h3>
+<p>I then added a selector on this thesaurus:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;field</span> <span class="na">xpath=</span><span class="s">&quot;/gmd:MD_Metadata/gmd:identificationInfo/*/gmd:descriptiveKeywords[*/gmd:thesaurusName/*/gmd:title/*/text() = &#39;Territoires&#39;]&quot;</span><span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>And the buttons underneath it will allow you, once you have selected one or more keywords, to set the extent based on the keywords</p>
+</section>
+<section id="have-this-thesaurus-available-in-the-extent-block">
+<h3>Have this thesaurus available in the extent block<a class="headerlink" href="#have-this-thesaurus-available-in-the-extent-block" title="Permalink to this headline">¶</a></h3>
+<p>In the extent block, you have a form field allowing to ‘choose a region’, either from geonames or from a few lists of very large entities (countries, oceans, etc).
+<img alt="choose a region" src="../_images/choose-a-region.png" />
+Those large entities are taken from the <code class="docutils literal notranslate"><span class="pre">regions.rdf</span></code> thesaurus. Most of the time, for regional platforms, it won’t be of any use.</p>
+<p>If you want, you can replace it by your geo-thesaurus. Unfortunately at the time of writing this, the name of the thesaurus is hardcoded, so you will have to rename or import a second time your thesaurus under the name <code class="docutils literal notranslate"><span class="pre">regions.rdf</span></code> to get it available on this widget.</p>
+</section>
+</section>
+<section id="resources">
+<h2>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h2>
+<p>Here are the resulting files:</p>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="../_downloads/a77f87ba2c981254a34864a759c83bc6/config-editor.xml"><span class="xref download myst">config-editor.xml</span></a></p></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/0d65cfb989c449586dce24c6b99f4e7a/strings.xml"><span class="xref download myst">strings.xml</span></a></p></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/a9d1dc597267c83f034ec467d984cdcb/gn_editor_default.less"><span class="xref download myst">gn_editor_default.less</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/tutorials/gn_custom_form.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

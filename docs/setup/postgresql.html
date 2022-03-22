@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Setting up the geOrchestra database &#8212; Python  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="setting-up-the-georchestra-database">
+<h1>Setting up the geOrchestra database<a class="headerlink" href="#setting-up-the-georchestra-database" title="Permalink to this headline">¶</a></h1>
+<p>The “georchestra” database hosts several schemas, which are specific to the deployed modules:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CREATE</span> <span class="n">USER</span> <span class="n">georchestra</span> <span class="n">WITH</span> <span class="n">NOCREATEDB</span> <span class="n">NOCREATEROLE</span> <span class="n">PASSWORD</span> <span class="s1">&#39;georchestra&#39;</span><span class="p">;</span>
+<span class="n">CREATE</span> <span class="n">DATABASE</span> <span class="n">georchestra</span> <span class="n">WITH</span> <span class="n">OWNER</span> <span class="n">georchestra</span> <span class="n">TEMPLATE</span> <span class="n">template0</span> <span class="n">ENCODING</span> <span class="n">UTF8</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Note 1: It is of course possible to store webapp-specific schemas in separate databases, taking advantage of geOrchestra’s extreme configurability.</p>
+<p>Note 2: PostGIS extensions are not required in the georchestra database, unless GeoFence is deployed (see below).</p>
+<section id="viewer-schema">
+<h2>Viewer schema<a class="headerlink" href="#viewer-schema" title="Permalink to this headline">¶</a></h2>
+<p>If <strong>mapfishapp</strong> is deployed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">f</span> <span class="n">postgresql</span><span class="o">/</span><span class="mi">020</span><span class="o">-</span><span class="n">mapfishapp</span><span class="o">.</span><span class="n">sql</span>
+</pre></div>
+</div>
+</section>
+<section id="console-schema">
+<h2>Console schema<a class="headerlink" href="#console-schema" title="Permalink to this headline">¶</a></h2>
+<p>If the <strong>console</strong> webapp is deployed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">f</span> <span class="n">postgresql</span><span class="o">/</span><span class="mi">040</span><span class="o">-</span><span class="n">console</span><span class="o">.</span><span class="n">sql</span>
+</pre></div>
+</div>
+</section>
+<section id="geofence-schema">
+<h2>GeoFence schema<a class="headerlink" href="#geofence-schema" title="Permalink to this headline">¶</a></h2>
+<p>If <strong>geofence</strong> is deployed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">f</span> <span class="n">postgresql</span><span class="o">/</span><span class="mi">010</span><span class="o">-</span><span class="n">create</span><span class="o">-</span><span class="n">extension</span><span class="o">.</span><span class="n">sql</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">f</span> <span class="n">postgresql</span><span class="o">/</span><span class="mi">080</span><span class="o">-</span><span class="n">geofence</span><span class="o">.</span><span class="n">sql</span>
+</pre></div>
+</div>
+</section>
+<section id="ogc-statistics-schema">
+<h2>OGC statistics schema<a class="headerlink" href="#ogc-statistics-schema" title="Permalink to this headline">¶</a></h2>
+<p>If the <strong>security proxy</strong> is deployed and its log4j uses the <code class="docutils literal notranslate"><span class="pre">org.georchestra.ogcservstatistics.log4j.OGCServicesAppender</span></code> as configured in the <a class="reference external" href="https://github.com/georchestra/datadir/blob/docker-master/security-proxy/log4j/log4j.properties">datadir</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">f</span> <span class="n">postgresql</span><span class="o">/</span><span class="mi">050</span><span class="o">-</span><span class="n">ogc</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">statistics</span><span class="o">.</span><span class="n">sql</span>
+</pre></div>
+</div>
+<section id="extractorapp-schema">
+<h3>Extractorapp schema<a class="headerlink" href="#extractorapp-schema" title="Permalink to this headline">¶</a></h3>
+<p>If the <strong>extractor app</strong> is deployed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">f</span> <span class="n">postgresql</span><span class="o">/</span><span class="mi">010</span><span class="o">-</span><span class="n">create</span><span class="o">-</span><span class="n">extension</span><span class="o">.</span><span class="n">sql</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">f</span> <span class="n">postgresql</span><span class="o">/</span><span class="mi">090</span><span class="o">-</span><span class="n">extractorapp</span><span class="o">.</span><span class="n">sql</span>
+</pre></div>
+</div>
+</section>
+<section id="atlas-schema">
+<h3>Atlas schema<a class="headerlink" href="#atlas-schema" title="Permalink to this headline">¶</a></h3>
+<p>If the <strong>Atlas</strong> is deployed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">f</span> <span class="n">postgresql</span><span class="o">/</span><span class="mi">060</span><span class="o">-</span><span class="n">atlas</span><span class="o">.</span><span class="n">sql</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="change-ownership-of-database-objects">
+<h2>Change ownership of database objects<a class="headerlink" href="#change-ownership-of-database-objects" title="Permalink to this headline">¶</a></h2>
+<p>Ensure geOrchestra database user is owner of database. If your database is dedicated to geOrchestra (no other
+apps are running in same database), you can use following procedure to reset ownership of all objects to selected user, for
+example <code class="docutils literal notranslate"><span class="pre">georchestra</span></code> :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">georchestra</span><span class="o">/</span><span class="n">georchestra</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">postgresql</span><span class="o">/</span><span class="n">fix</span><span class="o">-</span><span class="n">owner</span><span class="o">.</span><span class="n">sql</span> <span class="o">-</span><span class="n">O</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">fix</span><span class="o">-</span><span class="n">owner</span><span class="o">.</span><span class="n">sql</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">fix</span><span class="o">-</span><span class="n">owner</span><span class="o">.</span><span class="n">sql</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;SELECT change_owner(&#39;mapfishapp&#39;, &#39;georchestra&#39;);&quot;</span><span class="p">;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;SELECT change_owner(&#39;console&#39;, &#39;georchestra&#39;);&quot;</span><span class="p">;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;SELECT change_owner(&#39;ogcstatistics&#39;, &#39;georchestra&#39;);&quot;</span><span class="p">;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;SELECT change_owner(&#39;extractorapp&#39;, &#39;georchestra&#39;);&quot;</span><span class="p">;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;SELECT change_owner(&#39;geofence&#39;, &#39;georchestra&#39;);&quot;</span><span class="p">;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;SELECT change_owner(&#39;atlas&#39;, &#39;georchestra&#39;);&quot;</span><span class="p">;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;SELECT change_owner(&#39;public&#39;, &#39;georchestra&#39;);&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="geonetwork-schema">
+<h2>GeoNetwork schema<a class="headerlink" href="#geonetwork-schema" title="Permalink to this headline">¶</a></h2>
+<p>If <strong>geonetwork</strong> is to be deployed, you need to create a dedicated user and schema:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">createuser</span> <span class="o">-</span><span class="n">SDRI</span> <span class="n">geonetwork</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;ALTER USER geonetwork WITH PASSWORD &#39;georchestra&#39;;&quot;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;CREATE SCHEMA AUTHORIZATION geonetwork;&quot;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;SELECT change_owner(&#39;geonetwork&#39;, &#39;geonetwork&#39;);&quot;</span>
+<span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;GRANT geonetwork TO georchestra;&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="cleanup-maintenance-function">
+<h2>Cleanup maintenance function<a class="headerlink" href="#cleanup-maintenance-function" title="Permalink to this headline">¶</a></h2>
+<p>Finally, you can drop maintenance function :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">psql</span> <span class="o">-</span><span class="n">d</span> <span class="n">georchestra</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;DROP FUNCTION change_owner(text, text);&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/setup/postgresql.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

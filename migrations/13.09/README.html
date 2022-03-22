@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>UPGRADING from 13.06 to 13.09 &#8212; Python  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="upgrading-from-13-06-to-13-09">
+<h1>UPGRADING from 13.06 to 13.09<a class="headerlink" href="#upgrading-from-13-06-to-13-09" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>mapfishapp:</p>
+<ul>
+<li><p>default projection changes from EPSG:2154 to EPSG:3857 (aka Spherical Web Mercator). Your users might need to clear their localStorage, or force loading of the new default context.</p></li>
+<li><p>default MAP_SCALES changes to match the OGC WMTS spec,</p></li>
+</ul>
+</li>
+<li><p>LDAP: see <a class="reference external" href="https://github.com/georchestra/LDAP/pull/2">georchestra/LDAP#2</a></p>
+<ul>
+<li><p>one group was renamed: <code class="docutils literal notranslate"><span class="pre">STAT_USER</span></code> becomes <code class="docutils literal notranslate"><span class="pre">MOD_ANALYTICS</span></code> - grants access to the analytics app,</p></li>
+<li><p>an other one was created: <code class="docutils literal notranslate"><span class="pre">MOD_LDAPADMIN</span></code> - grants access to the LDAPadmin private UI (/ldapadmin/privateui/).</p></li>
+</ul>
+</li>
+<li><p>The default application language is now <strong>English</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">shared.language</span></code> = en</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">geonetwork.language</span></code> = eng</p></li>
+<li><p>default email templates <a class="reference external" href="https://github.com/georchestra/georchestra/tree/master/config/defaults/ldapadmin/WEB-INF/templates">here</a> and <a class="reference external" href="https://github.com/georchestra/georchestra/tree/master/config/defaults/extractorapp/WEB-INF/templates">there</a>: be sure to override them in your own config !</p></li>
+</ul>
+</li>
+<li><p>Remember also to fill these new global maven filters:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">shared.homepage.url</span></code> - for your SDI home page (might be something like http://my.sdi.org/portal/),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shared.instance.name</span></code> - will be displayed in page titles (eg: GeoMyCompany),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shared.email.html</span></code> - whether to send emails in plain text (default) or HTML,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shared.administrator.email</span></code> - this email receives new account requests (eg: me&#64;mycompany.com)</p></li>
+</ul>
+</li>
+<li><p>shared maven filters renamed:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">shared.smtp.replyTo</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">shared.email.replyTo</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shared.smtp.from</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">shared.email.from</span></code></p></li>
+</ul>
+</li>
+<li><p>frontend webserver:</p>
+<ul>
+<li><p>add a proxy rule for <code class="docutils literal notranslate"><span class="pre">/_static/</span></code> subdirectory (see https://github.com/georchestra/georchestra/tree/master/INSTALL.md)</p></li>
+</ul>
+</li>
+</ul>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/13.09/README.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

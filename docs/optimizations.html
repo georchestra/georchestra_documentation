@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Optimizations &#8212; Python  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="optimizations">
+<h1>Optimizations<a class="headerlink" href="#optimizations" title="Permalink to this headline">¶</a></h1>
+<section id="geoserver">
+<h2>GeoServer<a class="headerlink" href="#geoserver" title="Permalink to this headline">¶</a></h2>
+<p>These steps are recommended, but they will not be very helpful if your data is not carefully prepared.
+Please refer to a recent “<a class="reference external" href="http://fr.slideshare.net/geosolutions/gs-steroids-foss4ge2014">GeoServer on steroids</a>” presentation for more information on GIS data optimizations.</p>
+<section id="libjpeg-turbo-map-encoder">
+<h3>libjpeg-turbo Map Encoder<a class="headerlink" href="#libjpeg-turbo-map-encoder" title="Permalink to this headline">¶</a></h3>
+<p>Installing the libjpeg-turbo map encoder improves the throughput of your service by accelerating JPEG compression and decompression.</p>
+<p>It requires:</p>
+<ul class="simple">
+<li><p>native libs installed with eg. the <a class="reference external" href="http://sourceforge.net/projects/libjpeg-turbo/files/">libjpeg-turbo-official debian package</a>.</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dpkg</span> <span class="o">-</span><span class="n">i</span> <span class="n">libjpeg</span><span class="o">-</span><span class="n">turbo</span><span class="o">-</span><span class="n">official_x</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">z_amd64</span><span class="o">.</span><span class="n">deb</span>
+</pre></div>
+</div>
+<p>installs the following files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">libjpeg</span><span class="o">-</span><span class="n">turbo</span><span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">libturbojpeg</span><span class="o">.</span><span class="n">so</span><span class="mf">.0</span>
+<span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">libjpeg</span><span class="o">-</span><span class="n">turbo</span><span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">libjpeg</span><span class="o">.</span><span class="n">so</span>
+<span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">libjpeg</span><span class="o">-</span><span class="n">turbo</span><span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">libjpeg</span><span class="o">.</span><span class="n">so</span><span class="mf">.62</span>
+<span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">libjpeg</span><span class="o">-</span><span class="n">turbo</span><span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">libturbojpeg</span><span class="o">.</span><span class="n">so</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>geoserver compiled using the <code class="docutils literal notranslate"><span class="pre">libjpeg-turbo</span></code> profile</p></li>
+</ul>
+<p>eg:
+<code class="docutils literal notranslate"><span class="pre">mvn</span> <span class="pre">-P-all,geoserver</span> <span class="pre">-Plibjpeg-turbo</span> <span class="pre">-Dmaven.test.skip=true</span> <span class="pre">clean</span> <span class="pre">install</span></code></p>
+<ul class="simple">
+<li><p>in <code class="docutils literal notranslate"><span class="pre">/etc/default/tomcat-geoserver0</span></code>:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">JAVA_OPTS</span><span class="o">=</span><span class="s2">&quot;$JAVA_OPTS </span><span class="se">\</span>
+<span class="s2">            -Djava.library.path=/usr/lib/jni:/opt/libjpeg-turbo/lib64/&quot;</span>
+</pre></div>
+</div>
+<p>Restart tomcat and check the new libs are taken into account: <code class="docutils literal notranslate"><span class="pre">cat</span> <span class="pre">/var/log/tomcat9/geoserver0.log</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">turbo</span></code> should display <code class="docutils literal notranslate"><span class="pre">[turbojpeg.TurboJPEGMapResponse]</span> <span class="pre">-</span> <span class="pre">The</span> <span class="pre">turbo</span> <span class="pre">jpeg</span> <span class="pre">encoder</span> <span class="pre">is</span> <span class="pre">available</span> <span class="pre">for</span> <span class="pre">usage</span></code></p>
+</section>
+<section id="marlin-renderer">
+<h3>Marlin Renderer<a class="headerlink" href="#marlin-renderer" title="Permalink to this headline">¶</a></h3>
+<p>Marlin is an antialised rendering engine, which plugs into the JVM to replace the native implementation.
+Marlin combines the advantages of both rendering engines it replaces: it has the scalability of OpenJDK’s “Pisces”, and the speed of Oracle’s “Ductus”.
+Note that it only works on recent versions of Oracle and OpenJDK (&gt;= 7).</p>
+<p>Installing it is not difficult:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/bourgesl/marlin-renderer/releases">grab the latest release</a></p></li>
+<li><p>put the <code class="docutils literal notranslate"><span class="pre">marlin-x.y.z.jar</span></code> file into <code class="docutils literal notranslate"><span class="pre">/usr/share/tomcat9/lib/</span></code> (don’t forget to chmod a+r marlin*.jar)</p></li>
+<li><p>in <code class="docutils literal notranslate"><span class="pre">/etc/defaults/tomcat-geoserver0</span></code>, add the following:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">JAVA_OPTS</span><span class="o">=</span><span class="s2">&quot;$JAVA_OPTS </span><span class="se">\</span>
+<span class="s2">            -Xbootclasspath/a:&quot;</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">tomcat9</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">marlin</span><span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">jar</span><span class="s2">&quot; </span><span class="se">\</span>
+<span class="s2">            -Dsun.java2d.renderer=org.marlin.pisces.PiscesRenderingEngine&quot;</span>
+</pre></div>
+</div>
+<p>Finally, restart tomcat-geoserver0 and check the jar has been loaded with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cat</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">tomcat</span><span class="o">-</span><span class="n">geoserver0</span><span class="o">/</span><span class="n">logs</span><span class="o">/</span><span class="n">catalina</span><span class="o">.</span><span class="n">out</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">Marlin</span>
+</pre></div>
+</div>
+<p>It should display “Marlin software rasterizer = ENABLED”</p>
+</section>
+<section id="control-flow">
+<h3>Control-Flow<a class="headerlink" href="#control-flow" title="Permalink to this headline">¶</a></h3>
+<p>For fairness reasons, and also to make your geoserver more scalable, you should setup limits to the number of concurrent requests handled by your GeoServer.</p>
+<p>By default, geOrchestra GeoServer ships with the <a class="reference external" href="http://docs.geoserver.org/stable/en/user/extensions/controlflow/index.html">control flow</a> module installed.</p>
+<p>If you have followed this guide, your geoserver probably also uses our recommended “geoserver data dir”, which includes a basic <a class="reference external" href="https://github.com/georchestra/geoserver_minimal_datadir/blob/master/controlflow.properties">controlflow config file</a>.</p>
+<p>If not, you should create a custom <code class="docutils literal notranslate"><span class="pre">controlflow.properties</span></code> file in your geoserver “data dir”.<br />
+Please refer to the <a class="reference external" href="http://docs.geoserver.org/latest/en/user/extensions/controlflow/index.html">control-flow module documentation</a> for the syntax.</p>
+</section>
+<section id="more-fonts">
+<h3>More fonts<a class="headerlink" href="#more-fonts" title="Permalink to this headline">¶</a></h3>
+<p>Add ‘contrib’ to your sourcelist :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">deb</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">ftp</span><span class="o">.</span><span class="n">fr</span><span class="o">.</span><span class="n">debian</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">debian</span> <span class="n">buster</span> <span class="n">main</span> <span class="n">contrib</span>
+</pre></div>
+</div>
+<p>And install the fonts :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
+<span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">ttf</span><span class="o">-</span><span class="n">mscorefonts</span><span class="o">-</span><span class="n">installer</span>
+</pre></div>
+</div>
+<p>And restart Geoserver : <code class="docutils literal notranslate"><span class="pre">service</span> <span class="pre">tomcat-geoserver0</span> <span class="pre">restart</span></code></p>
+<p>To see if they are correctly installed, open the GeoServer “server status” page (````/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.admin.StatusPage```) and check that there are 72 fonts available.</p>
+</section>
+<section id="fine-tuning">
+<h3>Fine tuning<a class="headerlink" href="#fine-tuning" title="Permalink to this headline">¶</a></h3>
+<p>Please refer to these excellent references:</p>
+<ul class="simple">
+<li><p>“<a class="reference external" href="http://docs.geoserver.org/stable/en/user/production/index.html">Running in a Production Environment</a>” section of the official GeoServer documentation,</p></li>
+<li><p><a class="reference external" href="http://geoserver.geo-solutions.it/edu/en/index.html">GeoServer training</a> by GeoSolutions</p></li>
+</ul>
+</section>
+</section>
+<section id="geowebcache">
+<h2>GeoWebCache<a class="headerlink" href="#geowebcache" title="Permalink to this headline">¶</a></h2>
+<p>An interesting collection of tips and tricks can be found here: <a class="reference external" href="http://geo-solutions.blogspot.fr/2012/05/tips-tricks-geowebcache-tweaks.html">http://geo-solutions.blogspot.fr/2012/05/tips-tricks-geowebcache-tweaks.html</a></p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/optimizations.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

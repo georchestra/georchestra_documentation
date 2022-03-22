@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Building and installing GeoServer support for JPEG2000 grid coverages with Kakadu 7.10 &#8212; Python  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="building-and-installing-geoserver-support-for-jpeg2000-grid-coverages-with-kakadu-7-10">
+<h1>Building and installing GeoServer support for JPEG2000 grid coverages with Kakadu 7.10<a class="headerlink" href="#building-and-installing-geoserver-support-for-jpeg2000-grid-coverages-with-kakadu-7-10" title="Permalink to this headline">¶</a></h1>
+<section id="build-kakadu-libraries">
+<h2>Build Kakadu libraries<a class="headerlink" href="#build-kakadu-libraries" title="Permalink to this headline">¶</a></h2>
+<p>We’re going to build the Kakadu 7.10 native libraries from sources, contained in a file called <code class="docutils literal notranslate"><span class="pre">v7_A_6-01900E.zip</span></code>.</p>
+<p>The kakadu libraries need to be built with a libc version compatible (equal or older) than the one where the geoserver runs, otherwise will get an error message like the following when starting up geoserver:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>geoserver_1                 | WARNING: Failed to load the Kakadu native libs. This is not a problem unless you need to use the Kakadu plugin: it won&#39;t be enabled.
+java.lang.UnsatisfiedLinkError: /mnt/geoserver_native_libs/libkdu_jni.so: /lib/x86_64-linux-gnu/libm.so.6: version
+`GLIBC_2.27&#39; not found (required by /mnt/geoserver_native_libs/libkdu_jni.so)
+</pre></div>
+</div>
+<p>For this reason we’ll use the <code class="docutils literal notranslate"><span class="pre">openjdk:11-jdk</span></code> docker image to build the native kakadu libraries.</p>
+<p>Let’s create a directory on the local machine with the uncompressed source files and mount it to a running container:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo mkdir -m <span class="m">0777</span> /opt/kakadu_build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> /opt/kakadu_build
+$ unzip ~/Downloads/kakadu/v7_A_6-01900E.zip -d sources
+$ docker run -it -h kdu -v /opt/kakadu_build/sources:/opt/kakadu openjdk:8-jdk
+root@kdu:/# <span class="nb">cd</span> /opt/kakadu/v7_A_6-01900E/
+</pre></div>
+</div>
+<p>Now install the necessary build tools:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>root@kdu:/opt/kakadu/v7_A_6-01900E# apt-get update
+root@kdu:/opt/kakadu/v7_A_6-01900E# apt-get install -y g++ make
+</pre></div>
+</div>
+<p>And actually build kakadu:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">root</span><span class="nd">@kdu</span><span class="p">:</span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">kakadu</span><span class="o">/</span><span class="n">v7_A_6</span><span class="o">-</span><span class="mi">01900</span><span class="n">E</span><span class="c1"># cd make</span>
+<span class="n">root</span><span class="nd">@kdu</span><span class="p">:</span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">kakadu</span><span class="o">/</span><span class="n">v7_A_6</span><span class="o">-</span><span class="mi">01900</span><span class="n">E</span><span class="o">/</span><span class="n">make</span><span class="c1"># make -f Makefile-Linux-x86-64-gcc</span>
+<span class="n">root</span><span class="nd">@kdu</span><span class="p">:</span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">kakadu</span><span class="o">/</span><span class="n">v7_A_6</span><span class="o">-</span><span class="mi">01900</span><span class="n">E</span><span class="o">/</span><span class="n">make</span><span class="c1"># cd ..</span>
+<span class="n">root</span><span class="nd">@kdu</span><span class="p">:</span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">kakadu</span><span class="o">/</span><span class="n">v7_A_6</span><span class="o">-</span><span class="mi">01900</span><span class="n">E</span><span class="o">/</span><span class="c1"># ls -l ./lib/Linux-x86-64-gcc</span>
+<span class="n">total</span> <span class="mi">13860</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">2071092</span> <span class="n">Apr</span> <span class="mi">18</span> <span class="mi">16</span><span class="p">:</span><span class="mi">30</span> <span class="n">libkdu</span><span class="o">.</span><span class="n">a</span>
+<span class="o">-</span><span class="n">rwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">3402168</span> <span class="n">Apr</span> <span class="mi">18</span> <span class="mi">16</span><span class="p">:</span><span class="mi">31</span> <span class="n">libkdu_a7AR</span><span class="o">.</span><span class="n">so</span>
+<span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">2595024</span> <span class="n">Apr</span> <span class="mi">18</span> <span class="mi">16</span><span class="p">:</span><span class="mi">32</span> <span class="n">libkdu_aux</span><span class="o">.</span><span class="n">a</span>
+<span class="o">-</span><span class="n">rwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">4626840</span> <span class="n">Apr</span> <span class="mi">18</span> <span class="mi">16</span><span class="p">:</span><span class="mi">32</span> <span class="n">libkdu_jni</span><span class="o">.</span><span class="n">so</span>
+<span class="o">-</span><span class="n">rwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">1488736</span> <span class="n">Apr</span> <span class="mi">18</span> <span class="mi">16</span><span class="p">:</span><span class="mi">30</span> <span class="n">libkdu_v7AR</span><span class="o">.</span><span class="n">so</span>
+<span class="n">root</span><span class="nd">@kdu</span><span class="p">:</span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">kakadu</span><span class="o">/</span><span class="n">v7_A_6</span><span class="o">-</span><span class="mi">01900</span><span class="n">E</span><span class="o">/</span><span class="c1"># ldd lib/Linux-x86-64-gcc/libkdu_jni.so</span>
+        <span class="n">linux</span><span class="o">-</span><span class="n">vdso</span><span class="o">.</span><span class="n">so</span><span class="mf">.1</span> <span class="p">(</span><span class="mh">0x00007fff89110000</span><span class="p">)</span>
+        <span class="n">libpthread</span><span class="o">.</span><span class="n">so</span><span class="mf">.0</span> <span class="o">=&gt;</span> <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">x86_64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libpthread</span><span class="o">.</span><span class="n">so</span><span class="mf">.0</span> <span class="p">(</span><span class="mh">0x00007f04b46bb000</span><span class="p">)</span>
+        <span class="n">libstdc</span><span class="o">++.</span><span class="n">so</span><span class="mf">.6</span> <span class="o">=&gt;</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">x86_64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libstdc</span><span class="o">++.</span><span class="n">so</span><span class="mf">.6</span> <span class="p">(</span><span class="mh">0x00007f04b4339000</span><span class="p">)</span>
+        <span class="n">libm</span><span class="o">.</span><span class="n">so</span><span class="mf">.6</span> <span class="o">=&gt;</span> <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">x86_64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libm</span><span class="o">.</span><span class="n">so</span><span class="mf">.6</span> <span class="p">(</span><span class="mh">0x00007f04b4035000</span><span class="p">)</span>
+        <span class="n">libgcc_s</span><span class="o">.</span><span class="n">so</span><span class="mf">.1</span> <span class="o">=&gt;</span> <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">x86_64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libgcc_s</span><span class="o">.</span><span class="n">so</span><span class="mf">.1</span> <span class="p">(</span><span class="mh">0x00007f04b3e1e000</span><span class="p">)</span>
+        <span class="n">libc</span><span class="o">.</span><span class="n">so</span><span class="mf">.6</span> <span class="o">=&gt;</span> <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">x86_64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libc</span><span class="o">.</span><span class="n">so</span><span class="mf">.6</span> <span class="p">(</span><span class="mh">0x00007f04b3a7f000</span><span class="p">)</span>
+        <span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">ld</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">x86</span><span class="o">-</span><span class="mf">64.</span><span class="n">so</span><span class="mf">.2</span> <span class="p">(</span><span class="mh">0x00007f04b4ec7000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>That got us the native libraries, now build the generated java JNI wrapper library:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>root@kdu:/opt/kakadu/v7_A_6-01900E# <span class="nb">cd</span> ../java
+root@kdu:/opt/kakadu/java# ls -F
+kdu_jni/
+root@kdu:/opt/kakadu/java# <span class="nb">cd</span> kdu_jni <span class="o">&amp;&amp;</span> javac *.java <span class="o">&amp;&amp;</span> <span class="nb">cd</span> ..
+root@kdu:/opt/kakadu/java# jar cvf kdu_jni.jar kdu_jni/
+root@kdu:/opt/kakadu/java# ls -lF
+total <span class="m">104</span>
+drwxr-xr-x <span class="m">2</span> root root   <span class="m">4096</span> Apr <span class="m">18</span> <span class="m">16</span>:31 kdu_jni/
+-rw-r--r-- <span class="m">1</span> root root <span class="m">232263</span> Apr <span class="m">18</span> <span class="m">16</span>:35 kdu_jni.jar
+root@kdu:/opt/kakadu/java# <span class="nb">exit</span>
+<span class="nb">exit</span>
+groldan@lilith:/opt/kakadu_build/sources$
+</pre></div>
+</div>
+<p>Finally, save the built libs for posterity somewhere, I keep them in <code class="docutils literal notranslate"><span class="pre">/opt/kakadu/lib</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>groldan@lilith:/opt/kakadu_build/sources$ sudo mkdir -p /opt/kakadu/lib
+groldan@lilith:/opt/kakadu_build/sources$ sudo cp java/kdu_jni.jar ./v7_A_6-01900E/lib/Linux-x86-64-gcc/libkdu_jni.so ./v7_A_6-01900E/lib/Linux-x86-64-gcc/libkdu_v7AR.so ./v7_A_6-01900E/lib/Linux-x86-64-gcc/libkdu_a7AR.so /opt/kakadu/lib/
+groldan@lilith:/opt/kakadu_build/sources$
+</pre></div>
+</div>
+</section>
+<section id="install-on-georchestra-s-geoserver">
+<h2>Install on geOrchestra’s GeoServer<a class="headerlink" href="#install-on-georchestra-s-geoserver" title="Permalink to this headline">¶</a></h2>
+<p>Now that both the native libraries and the JNI wrapper jar file are built, we need to make them available to GeoServer.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd ~/git/georchestra/docker
+$ docker-compose up -d
+$ docker cp /opt/kakadu/lib/libkdu_a7AR.so docker_geoserver_1:/mnt/geoserver_native_libs/
+$ docker cp /opt/kakadu/lib/libkdu_v7AR.so docker_geoserver_1:/mnt/geoserver_native_libs/
+$ docker cp /opt/kakadu/lib/libkdu_jni.so docker_geoserver_1:/mnt/geoserver_native_libs/
+$ docker-compose exec geoserver ls -l /mnt/geoserver_native_libs
+total 9300
+-rwxr-xr-x 1 root root 3402168 Apr 18 17:06 libkdu_a7AR.so
+-rwxr-xr-x 1 root root 4626840 Apr 18 17:06 libkdu_jni.so
+-rwxr-xr-x 1 root root 1488736 Apr 18 17:06 libkdu_v7AR.so
+$ docker-compose restart geoserver
+</pre></div>
+</div>
+</section>
+<section id="test-with-sample-data">
+<h2>Test with sample data<a class="headerlink" href="#test-with-sample-data" title="Permalink to this headline">¶</a></h2>
+<p>If you have GDAL installed it’s easy to create a sample Jpeg2000 sample coverage:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ wget https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57752/land_shallow_topo_21600.tif
+$ gdal_translate -of JP2OpenJPEG -a_srs WGS84 -a_ullr -180 90 180 -90 land_shallow_topo_21600.tif land_shallow_topo_21600.jp2
+Input file size is 21600, 10800
+0...10...20...30...40...50...60...70...80...90...100 - done.
+$
+$ ls -lh land_shallow_topo_21600.*
+-rw-rw-r-- 1 groldan groldan  73M abr 18 15:35 land_shallow_topo_21600.jp2
+-rw-rw-r-- 1 groldan groldan 174M oct  5  2011 land_shallow_topo_21600.tif
+$
+$ gdalinfo land_shallow_topo_21600.jp2
+Driver: JP2OpenJPEG/JPEG-2000 driver based on OpenJPEG library
+Files: land_shallow_topo_21600.jp2
+Size is 21600, 10800
+Coordinate System is:
+GEOGCS[&quot;WGS 84&quot;,
+    DATUM[&quot;WGS_1984&quot;,
+        SPHEROID[&quot;WGS 84&quot;,6378137,298.257223563,
+            AUTHORITY[&quot;EPSG&quot;,&quot;7030&quot;]],
+        AUTHORITY[&quot;EPSG&quot;,&quot;6326&quot;]],
+    PRIMEM[&quot;Greenwich&quot;,0],
+    UNIT[&quot;degree&quot;,0.0174532925199433],
+    AUTHORITY[&quot;EPSG&quot;,&quot;4326&quot;]]
+Origin = (-180.000000000000000,90.000000000000000)
+Pixel Size = (0.016666666666667,-0.016666666666667)
+Metadata:
+  TIFFTAG_RESOLUTIONUNIT=3 (pixels/cm)
+  TIFFTAG_XRESOLUTION=28.3462
+  TIFFTAG_YRESOLUTION=28.3462
+Image Structure Metadata:
+  INTERLEAVE=PIXEL
+Corner Coordinates:
+Upper Left  (-180.0000000,  90.0000000) (180d 0&#39; 0.00&quot;W, 90d 0&#39; 0.00&quot;N)
+Lower Left  (-180.0000000, -90.0000000) (180d 0&#39; 0.00&quot;W, 90d 0&#39; 0.00&quot;S)
+Upper Right ( 180.0000000,  90.0000000) (180d 0&#39; 0.00&quot;E, 90d 0&#39; 0.00&quot;N)
+Lower Right ( 180.0000000, -90.0000000) (180d 0&#39; 0.00&quot;E, 90d 0&#39; 0.00&quot;S)
+Center      (   0.0000000,   0.0000000) (  0d 0&#39; 0.01&quot;E,  0d 0&#39; 0.01&quot;N)
+Band 1 Block=1024x1024 Type=Byte, ColorInterp=Red
+  Overviews: 10800x5400, 5400x2700, 2700x1350
+  Overviews: arbitrary
+  Image Structure Metadata:
+    COMPRESSION=JPEG2000
+Band 2 Block=1024x1024 Type=Byte, ColorInterp=Green
+  Overviews: 10800x5400, 5400x2700, 2700x1350
+  Overviews: arbitrary
+  Image Structure Metadata:
+    COMPRESSION=JPEG2000
+Band 3 Block=1024x1024 Type=Byte, ColorInterp=Blue
+  Overviews: 10800x5400, 5400x2700, 2700x1350
+  Overviews: arbitrary
+  Image Structure Metadata:
+    COMPRESSION=JPEG2000
+</pre></div>
+</div>
+<p>And copy the file to the <code class="docutils literal notranslate"><span class="pre">geoserver_geodata</span></code> volume:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ docker cp land_shallow_topo_21600.jp2 docker_geoserver_1:/mnt/geoserver_geodata/
+</pre></div>
+</div>
+<p>To set up a layer out of this coverage:</p>
+<ul class="simple">
+<li><p>Browse to geoserver’s admin UI at https://georchestra.mydomain.org/geoserver</p></li>
+<li><p>Select <code class="docutils literal notranslate"><span class="pre">Stores</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">Add</span> <span class="pre">new</span> <span class="pre">Store</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">JP2K</span> <span class="pre">(Direct)</span></code></p></li>
+<li><p>Fill “Data source name” with <code class="docutils literal notranslate"><span class="pre">land_shallow_topo_21600</span></code> and “Connection parameters/URL” with <code class="docutils literal notranslate"><span class="pre">file:/mnt/geoserver_geodata/land_shallow_topo_21600.jp2</span></code></p></li>
+<li><p>Hit the “Save” button, the “New Layer” page will show up listing the <code class="docutils literal notranslate"><span class="pre">land_shallow_topo_21600</span></code> coverage</p></li>
+<li><p>Hit the “publish” link besides the layer name, scroll down to the bottom of the “Edit layer” form page and hit <strong>Save</strong></p></li>
+<li><p>Finally check the layer is working through the WMS: https://georchestra.mydomain.org/geoserver/wms/reflect?layers=land_shallow_topo_21600&amp;format=application/openlayers</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/kakadu.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

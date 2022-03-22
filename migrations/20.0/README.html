@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>From 19.04 to 20.0.x &#8212; Python  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="from-19-04-to-20-0-x">
+<h1>From 19.04 to 20.0.x<a class="headerlink" href="#from-19-04-to-20-0-x" title="Permalink to this headline">¶</a></h1>
+<section id="database-migration">
+<h2>Database migration<a class="headerlink" href="#database-migration" title="Permalink to this headline">¶</a></h2>
+<p>For the console, related to the GDPR compliance API <a class="reference external" href="https://github.com/georchestra/georchestra/pull/2613">#2613</a>, you should:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GRANT</span> <span class="n">geonetwork</span> <span class="n">TO</span> <span class="n">georchestra</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>For Geonetwork, since we now sync LDAP Organizations with GeoNetwork groups:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ALTER</span> <span class="n">TABLE</span> <span class="n">geonetwork</span><span class="o">.</span><span class="n">groups</span> <span class="n">ALTER</span> <span class="n">COLUMN</span> <span class="n">name</span> <span class="n">TYPE</span> <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">);</span>
+<span class="n">ALTER</span> <span class="n">TABLE</span> <span class="n">geonetwork</span><span class="o">.</span><span class="n">groupsdes</span> <span class="n">ALTER</span> <span class="n">COLUMN</span> <span class="n">label</span> <span class="n">TYPE</span> <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>No other manual changes on the model are required to upgrade to the new version, since hibernate will take care of it.</p>
+</section>
+<section id="ldap-upgrade">
+<h2>LDAP upgrade<a class="headerlink" href="#ldap-upgrade" title="Permalink to this headline">¶</a></h2>
+<p>With this release, custom new attributes are added to geOrchestra users and organisations in the LDAP, leveraging a custom, <a class="reference external" href="https://github.com/georchestra/georchestra/blob/master/ldap/docker-root/georchestraSchema.ldif">dedicated schema</a>.
+As a result, the LDAP DIT should be upgraded with the provided <a class="reference download internal" download="" href="../_downloads/abb03f5cd5629714eadb99b3dbb52b9c/upgrade_ldap_from_19.04_to_20.0.ldif"><span class="xref download myst">script</span></a>, which creates a new geOrchestra schema with the required objectClasses and attributes.</p>
+<p>First of all, we recommend that you backup all entries:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ldapsearch</span> <span class="o">-</span><span class="n">H</span> <span class="n">ldap</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">389</span> <span class="o">-</span><span class="n">xLLL</span> <span class="o">-</span><span class="n">D</span> <span class="s2">&quot;cn=admin,dc=georchestra,dc=org&quot;</span> <span class="o">-</span><span class="n">b</span> <span class="s2">&quot;ou=users,dc=georchestra,dc=org&quot;</span> <span class="o">&gt;</span> <span class="n">users</span><span class="o">.</span><span class="n">backup</span><span class="o">.</span><span class="n">ldif</span>
+<span class="n">ldapsearch</span> <span class="o">-</span><span class="n">H</span> <span class="n">ldap</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">389</span> <span class="o">-</span><span class="n">xLLL</span> <span class="o">-</span><span class="n">D</span> <span class="s2">&quot;cn=admin,dc=georchestra,dc=org&quot;</span> <span class="o">-</span><span class="n">b</span> <span class="s2">&quot;ou=orgs,dc=georchestra,dc=org&quot;</span> <span class="o">&gt;</span> <span class="n">orgs</span><span class="o">.</span><span class="n">backup</span><span class="o">.</span><span class="n">ldif</span>
+<span class="n">ldapsearch</span> <span class="o">-</span><span class="n">H</span> <span class="n">ldap</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">389</span> <span class="o">-</span><span class="n">xLLL</span> <span class="o">-</span><span class="n">D</span> <span class="s2">&quot;cn=admin,dc=georchestra,dc=org&quot;</span> <span class="o">-</span><span class="n">b</span> <span class="s2">&quot;ou=roles,dc=georchestra,dc=org&quot;</span> <span class="o">&gt;</span> <span class="n">roles</span><span class="o">.</span><span class="n">backup</span><span class="o">.</span><span class="n">ldif</span>
+</pre></div>
+</div>
+<p>Once this is done, you can start adding the new schema:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">georchestra</span><span class="o">/</span><span class="n">georchestra</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">migrations</span><span class="o">/</span><span class="mf">20.0</span><span class="o">.</span><span class="n">x</span><span class="o">/</span><span class="n">upgrade_ldap_from_19</span><span class="mf">.04</span><span class="n">_to_20</span><span class="mf">.0</span><span class="o">.</span><span class="n">ldif</span> <span class="o">-</span><span class="n">O</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">upgrade_ldap_from_19</span><span class="mf">.04</span><span class="n">_to_20</span><span class="mf">.0</span><span class="o">.</span><span class="n">ldif</span>
+<span class="n">sudo</span> <span class="n">ldapadd</span> <span class="o">-</span><span class="n">Y</span> <span class="n">EXTERNAL</span> <span class="o">-</span><span class="n">H</span> <span class="n">ldapi</span><span class="p">:</span><span class="o">///</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">upgrade_ldap_from_19</span><span class="mf">.04</span><span class="n">_to_20</span><span class="mf">.0</span><span class="o">.</span><span class="n">ldif</span>
+</pre></div>
+</div>
+<p>Let’s prepare a migration LDIF, for users:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ldapsearch</span> <span class="o">-</span><span class="n">x</span> <span class="o">-</span><span class="n">H</span> <span class="n">ldap</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">389</span> <span class="o">-</span><span class="n">o</span> <span class="n">ldif</span><span class="o">-</span><span class="n">wrap</span><span class="o">=</span><span class="n">no</span> <span class="o">-</span><span class="n">b</span> <span class="s2">&quot;ou=users,dc=georchestra,dc=org&quot;</span> <span class="n">dn</span> <span class="o">|</span><span class="n">grep</span> <span class="s2">&quot;^dn: uid=&quot;</span> <span class="o">|</span> <span class="k">while</span> <span class="n">read</span> <span class="n">f</span> <span class="p">;</span> <span class="n">do</span>
+    <span class="n">printf</span> <span class="s2">&quot;$f</span><span class="se">\n</span><span class="s2">changetype:modify</span><span class="se">\n</span><span class="s2">add:objectClass</span><span class="se">\n</span><span class="s2">objectClass:georchestraUser</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">modify</span><span class="o">.</span><span class="n">ldif</span>
+<span class="n">done</span>
+</pre></div>
+</div>
+<p>Then for orgs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ldapsearch</span> <span class="o">-</span><span class="n">x</span> <span class="o">-</span><span class="n">H</span> <span class="n">ldap</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">389</span> <span class="o">-</span><span class="n">o</span> <span class="n">ldif</span><span class="o">-</span><span class="n">wrap</span><span class="o">=</span><span class="n">no</span> <span class="o">-</span><span class="n">b</span> <span class="s2">&quot;ou=orgs,dc=georchestra,dc=org&quot;</span> <span class="s1">&#39;(objectClass=organization)&#39;</span> <span class="n">dn</span> <span class="o">|</span><span class="n">grep</span> <span class="s2">&quot;^dn: o=&quot;</span> <span class="o">|</span> <span class="k">while</span> <span class="n">read</span> <span class="n">f</span> <span class="p">;</span> <span class="n">do</span>
+    <span class="n">printf</span> <span class="s2">&quot;$f</span><span class="se">\n</span><span class="s2">changetype:modify</span><span class="se">\n</span><span class="s2">add:objectClass</span><span class="se">\n</span><span class="s2">objectClass:georchestraOrg</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">modify</span><span class="o">.</span><span class="n">ldif</span>
+<span class="n">done</span>
+</pre></div>
+</div>
+<p>Check the generated <code class="docutils literal notranslate"><span class="pre">modify.ldif</span></code> file is correct. It should look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dn</span><span class="p">:</span> <span class="n">uid</span><span class="o">=</span><span class="n">aaaaaa</span><span class="p">,</span><span class="n">ou</span><span class="o">=</span><span class="n">users</span><span class="p">,</span><span class="n">dc</span><span class="o">=</span><span class="n">georchestra</span><span class="p">,</span><span class="n">dc</span><span class="o">=</span><span class="n">org</span>
+<span class="n">changetype</span><span class="p">:</span><span class="n">modify</span>
+<span class="n">add</span><span class="p">:</span><span class="n">objectClass</span>
+<span class="n">objectClass</span><span class="p">:</span><span class="n">georchestraUser</span>
+
+<span class="n">dn</span><span class="p">:</span> <span class="n">uid</span><span class="o">=</span><span class="n">bbbbbb</span><span class="p">,</span><span class="n">ou</span><span class="o">=</span><span class="n">users</span><span class="p">,</span><span class="n">dc</span><span class="o">=</span><span class="n">georchestra</span><span class="p">,</span><span class="n">dc</span><span class="o">=</span><span class="n">org</span>
+<span class="n">changetype</span><span class="p">:</span><span class="n">modify</span>
+<span class="n">add</span><span class="p">:</span><span class="n">objectClass</span>
+<span class="n">objectClass</span><span class="p">:</span><span class="n">georchestraUser</span>
+<span class="o">.</span>
+<span class="o">.</span>
+<span class="o">.</span>
+<span class="n">dn</span><span class="p">:</span> <span class="n">o</span><span class="o">=</span><span class="n">yyyyyy</span><span class="p">,</span><span class="n">ou</span><span class="o">=</span><span class="n">orgs</span><span class="p">,</span><span class="n">dc</span><span class="o">=</span><span class="n">georchestra</span><span class="p">,</span><span class="n">dc</span><span class="o">=</span><span class="n">org</span>
+<span class="n">changetype</span><span class="p">:</span><span class="n">modify</span>
+<span class="n">add</span><span class="p">:</span><span class="n">objectClass</span>
+<span class="n">objectClass</span><span class="p">:</span><span class="n">georchestraOrg</span>
+
+<span class="n">dn</span><span class="p">:</span> <span class="n">o</span><span class="o">=</span><span class="n">zzzzzz</span><span class="p">,</span><span class="n">ou</span><span class="o">=</span><span class="n">orgs</span><span class="p">,</span><span class="n">dc</span><span class="o">=</span><span class="n">georchestra</span><span class="p">,</span><span class="n">dc</span><span class="o">=</span><span class="n">org</span>
+<span class="n">changetype</span><span class="p">:</span><span class="n">modify</span>
+<span class="n">add</span><span class="p">:</span><span class="n">objectClass</span>
+<span class="n">objectClass</span><span class="p">:</span><span class="n">georchestraOrg</span>
+</pre></div>
+</div>
+<p>Finally upgrade all entries:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ldapmodify</span> <span class="o">-</span><span class="n">H</span> <span class="n">ldap</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">389</span> <span class="o">-</span><span class="n">D</span> <span class="s2">&quot;cn=admin,dc=georchestra,dc=org&quot;</span> <span class="o">-</span><span class="n">W</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">modify</span><span class="o">.</span><span class="n">ldif</span>
+</pre></div>
+</div>
+<p>If anything goes wrong during the upgrade process, you can rollback thanks to the above backup (always inserting users first, or the <code class="docutils literal notranslate"><span class="pre">memberOf</span></code> overlay won’t work !).</p>
+</section>
+<section id="mapstore-admin-role">
+<h2>MAPSTORE_ADMIN role<a class="headerlink" href="#mapstore-admin-role" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">20.0.6</span></code> release introduces the <code class="docutils literal notranslate"><span class="pre">MAPSTORE_ADMIN</span></code> role in the LDAP, granting administrative access to its members, on the new viewer based on Mapstore2. It can be inserted in
+an existing OpenLDAP tree considering the following LDIF specification:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># cat mapstore-admin-role.ldif</span>
+<span class="c1"># MAPSTORE_ADMIN, roles, georchestra.org</span>
+<span class="n">dn</span><span class="p">:</span> <span class="n">cn</span><span class="o">=</span><span class="n">MAPSTORE_ADMIN</span><span class="p">,</span><span class="n">ou</span><span class="o">=</span><span class="n">roles</span><span class="p">,</span><span class="n">dc</span><span class="o">=</span><span class="n">georchestra</span><span class="p">,</span><span class="n">dc</span><span class="o">=</span><span class="n">org</span>
+<span class="n">objectClass</span><span class="p">:</span> <span class="n">top</span>
+<span class="n">objectClass</span><span class="p">:</span> <span class="n">groupOfMembers</span>
+<span class="n">cn</span><span class="p">:</span> <span class="n">MAPSTORE_ADMIN</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">This</span> <span class="n">role</span> <span class="n">grants</span> <span class="n">administrative</span> <span class="n">access</span> <span class="n">to</span> <span class="n">MapStore2</span>
+<span class="n">member</span><span class="p">:</span> <span class="n">uid</span><span class="o">=</span><span class="n">testadmin</span><span class="p">,</span><span class="n">ou</span><span class="o">=</span><span class="n">users</span><span class="p">,</span><span class="n">dc</span><span class="o">=</span><span class="n">georchestra</span><span class="p">,</span><span class="n">dc</span><span class="o">=</span><span class="n">org</span>
+</pre></div>
+</div>
+<p>Using the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ldapadd -H ldap://localhost:389 -D &quot;cn=admin,dc=georchestra,dc=org&quot; -W -f mapstore-admin-role.ldif
+</pre></div>
+</div>
+</section>
+<section id="datadir-migration">
+<h2>Datadir migration<a class="headerlink" href="#datadir-migration" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">security</span> <span class="pre">proxy</span></code>, <code class="docutils literal notranslate"><span class="pre">console</span></code> and <code class="docutils literal notranslate"><span class="pre">geonetwork</span></code> applications have had several important changes in their configuration files. We provide a <a class="reference external" href="https://gist.github.com/fvanderbiest/e3afb00cd47a406cddaa2991d7171d01">diff</a> to make your mind between starting from a fresh one, or upgrading yours.</p>
+</section>
+<section id="frontend">
+<h2>Frontend<a class="headerlink" href="#frontend" title="Permalink to this headline">¶</a></h2>
+<p>The following RewriteRule can be safely removed since <a class="reference external" href="https://github.com/georchestra/georchestra/pull/2872">georchestra/georchestra#2872</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>RewriteCond %{REQUEST_URI} !^/console/manager/public/.*$
+RewriteCond %{REQUEST_URI} ^/console/manager/([home|users|org|orgs|role|roles|logs|analytics|delegations].*)$
+RewriteRule .* /console/manager/#!/%1 [NE,R,L]
+</pre></div>
+</div>
+<p>It is now managed by the console application itself.</p>
+</section>
+<section id="tomcat-for-geoserver">
+<h2>Tomcat for GeoServer<a class="headerlink" href="#tomcat-for-geoserver" title="Permalink to this headline">¶</a></h2>
+<p>Locate tomcat’s <code class="docutils literal notranslate"><span class="pre">conf/context.xml</span></code> and update the <code class="docutils literal notranslate"><span class="pre">&lt;Context&gt;</span></code> tag in order to set <code class="docutils literal notranslate"><span class="pre">useRelativeRedirects</span></code> to <code class="docutils literal notranslate"><span class="pre">false</span></code>, eg:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;Context</span> <span class="na">useRelativeRedirects=</span><span class="s">&quot;false&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;WatchedResource&gt;</span>WEB-INF/web.xml<span class="nt">&lt;/WatchedResource&gt;</span>
+    <span class="nt">&lt;WatchedResource&gt;</span>${catalina.base}/conf/web.xml<span class="nt">&lt;/WatchedResource&gt;</span>
+<span class="nt">&lt;/Context&gt;</span>
+</pre></div>
+</div>
+<p>See <a class="reference external" href="https://github.com/georchestra/georchestra/pull/1847">#1857</a> for the motivations.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/20.0/README.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

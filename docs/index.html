@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Releases &#8212; Python  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <p>geOrchestra is a complete <strong>Spatial Data Infrastructure</strong> solution.</p>
+<p>It features a <strong>metadata catalog</strong> (GeoNetwork 4), an <strong>OGC server</strong> (GeoServer 2.18) with fine-grained access control (based on GeoFence), an <strong>advanced viewer and editor</strong>, an <strong>extractor</strong> and <strong>many more</strong> (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, …)</p>
+<section id="releases">
+<h1>Releases<a class="headerlink" href="#releases" title="Permalink to this headline">¶</a></h1>
+<p>There are major and patch releases:</p>
+<ul class="simple">
+<li><p>Major releases are supported during 12 months.</p></li>
+<li><p>Migrating from one patch release to another does not require any configuration change. It is highly recommended.</p></li>
+</ul>
+<p>Have a look at the <a class="reference internal" href="releases.html"><span class="doc std std-doc">version numbering scheme</span></a> and the <a class="reference external" href="https://github.com/georchestra/georchestra/releases">release notes</a> for more information.</p>
+</section>
+<section id="install">
+<h1>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h1>
+<p>Depending on your goals and skills, there are several ways to install geOrchestra:</p>
+<ul class="simple">
+<li><p>a <a class="reference external" href="https://github.com/georchestra/docker/blob/master/docker-compose.yml">docker composition</a>, which pulls pre-built images from <a class="reference external" href="https://hub.docker.com/u/georchestra/">docker hub</a>, is perfect for a quick start. Provided you have a good download speed and recent machine (8Gb required), you’ll be up and running within 10 minutes. Read <a class="reference external" href="https://github.com/georchestra/docker/blob/master/README.md">how to run geOrchestra on Docker</a> here. Use the branch matching the target version (<code class="docutils literal notranslate"><span class="pre">master</span></code> for dev purposes).</p></li>
+<li><p>a contributed <a class="reference external" href="https://github.com/georchestra/ansible">ansible playbook</a> allows you to spin an instance in a few minutes. This is probably the easiest way to create a small server, since it takes care of installing the middleware, fetching the webapps and configuring them. Same as above: use the branch matching target version.</p></li>
+<li><p><a class="reference external" href="https://packages.georchestra.org/">debian packages</a> are perfect to create complex production architectures, but you’ll have to <a class="reference internal" href="setup.html"><span class="doc std std-doc">install and configure the middleware</span></a> first. The community provides these packages on a “best effort” basis, with no warranty at all.</p></li>
+<li><p>you could also use the <a class="reference external" href="https://packages.georchestra.org/">generic wars</a> with their “<a class="reference external" href="https://github.com/georchestra/datadir">datadir</a>”, as an alternate method. The above packages provide both.</p></li>
+<li><p>finally, <a class="reference internal" href="build.html"><span class="doc std std-doc">building from the sources</span></a> is also possible, but only relevant when customizations are needed. One gets custom WAR files, packages or docker images that can be <a class="reference internal" href="deploy.html"><span class="doc std std-doc">deployed</span></a> to dev, test, or production servers.</p></li>
+</ul>
+<p>If you opt for the middleware setup by yourself, there are several <a class="reference internal" href="optimizations.html"><span class="doc std std-doc">optimizations</span></a>, <a class="reference internal" href="good_practices.html"><span class="doc std std-doc">good practices</span></a> and <a class="reference internal" href="tutorials.html"><span class="doc std std-doc">tutorials</span></a> that are worth reading.
+Note that the minimum system requirement is 2 cores and 8Gb RAM, but we recommend at least 4 cores and 16 Gb RAM for a production instance.
+More RAM is of course better !</p>
+</section>
+<section id="community">
+<h1>Community<a class="headerlink" href="#community" title="Permalink to this headline">¶</a></h1>
+<p>If you need more information, please ask on the <a class="reference external" href="https://groups.google.com/forum/#!forum/georchestra">geOrchestra mailing list</a>.</p>
+<p>For help setting up your instance, or for dev-related questions, use the <a class="reference external" href="https://kiwiirc.com/client/irc.freenode.net/georchestra">#georchestra</a> IRC channel or the <a class="reference external" href="https://groups.google.com/forum/#!forum/georchestra-dev">dev/tech list</a>.</p>
+<p>If you found a bug or want to propose improvements and new features, please <a class="reference external" href="https://github.com/georchestra/georchestra/issues/new/choose">fill a new issue</a> in the GitHub tracker.</p>
+<p>If you want to report a <strong>security issue</strong>, please don’t fill an issue. Instead, send a mail to <a class="reference external" href="mailto:psc&#37;&#52;&#48;georchestra&#46;org">psc<span>&#64;</span>georchestra<span>&#46;</span>org</a>, you will be later contacted for more details.</p>
+</section>
+<section id="more">
+<h1>More<a class="headerlink" href="#more" title="Permalink to this headline">¶</a></h1>
+<p>Additional information can be found in the <a class="reference external" href="http://www.georchestra.org/">georchestra.org</a> website and in the following links:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/georchestra/geonetwork/blob/georchestra-gn3.4-18.06/README.md">catalog</a>: standard GeoNetwork with a light customization,</p></li>
+<li><p><a class="reference external" href="https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md">viewer</a> (aka mapfishapp): a robust, OGC-compliant webgis with editing capabilities,</p></li>
+<li><p><a class="reference external" href="https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md">extractor</a> (aka extractorapp): able to create zips from data served through OGC web services and send an email when your extraction is done,</p></li>
+<li><p><a class="reference external" href="http://geoserver.org/">geoserver</a>: the reference implementation for many OGC web services,</p></li>
+<li><p><a class="reference external" href="http://geowebcache.org/">geowebcache</a>: a fast and easy to use tile cache,</p></li>
+<li><p><a class="reference external" href="https://github.com/georchestra/geofence/blob/georchestra/georchestra.md">geofence</a>: optional, advanced OGC web services security,</p></li>
+<li><p><a class="reference external" href="https://github.com/georchestra/georchestra/blob/master/analytics/README.md">analytics</a>: admin-oriented module, a front-end to the <a class="reference external" href="https://github.com/georchestra/georchestra/blob/master/ogc-server-statistics/README.md">ogc-server-statistics</a> module,</p></li>
+<li><p><a class="reference external" href="https://github.com/georchestra/georchestra/blob/master/console/README.md">console</a>: also an admin-oriented module, to manage users and groups,</p></li>
+<li><p><a class="reference external" href="https://github.com/georchestra/georchestra/blob/master/header/README.md">header</a>: the common header which is used by all modules,</p></li>
+<li><p><a class="reference external" href="https://github.com/georchestra/georchestra/blob/master/atlas/README.md">atlas</a>: a server-side component to print multi-page PDF with one geographic feature per page.</p></li>
+</ul>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>GeoServer instances clustering &#8212; Python  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="geoserver-instances-clustering">
+<h1>GeoServer instances clustering<a class="headerlink" href="#geoserver-instances-clustering" title="Permalink to this headline">¶</a></h1>
+<p>When one server is not enough to handle the load, or when <strong>High Availability</strong> &amp; <strong>High Performance</strong> are expected, it is a good idea to setup a cluster of GeoServer instances.</p>
+<p>In the proposed setup, one GeoServer instance is dedicated to administration, while the other ones (called “slaves”) handle incoming requests.</p>
+<p>A typical setup could be:</p>
+<ul class="simple">
+<li><p><strong>GeoServer main</strong> installed on the same machine as the proxy + cas (but on a different tomcat instance)</p></li>
+<li><p><strong>GeoServer slaves</strong> installed on separate machines</p></li>
+</ul>
+<p>All instances will have to share two things:</p>
+<ul class="simple">
+<li><p>their configuration (aka the “data dir”)</p></li>
+<li><p>their geodata</p></li>
+</ul>
+<p>There are lots of different ways to achieve this, and we will not go through all of them.
+The most common setup is based on <strong>NFS shares</strong>, and that’s the one we describe here, but we’ve seen <a class="reference external" href="https://gist.github.com/fvanderbiest/d93c6c7d2e58425c2b2e">interesting things</a> based on git recently.</p>
+<section id="server-setup">
+<h2>Server setup<a class="headerlink" href="#server-setup" title="Permalink to this headline">¶</a></h2>
+<p>Every “slave” machine should host one tomcat instance containing a single webapp, deployed from the same GeoServer WAR.</p>
+<p>We also take for granted that instances have been setup according to the <span class="xref myst">documentation regarding tomcat-geoserver</span> and that the recommended <a class="reference internal" href="../optimizations.html"><span class="doc std std-doc">optimizations</span></a> have been applied (Marlin Renderer, JAI / ImageIO, TurboJPEG, ControlFlow, etc).</p>
+</section>
+<section id="nfs-setup">
+<h2>NFS setup<a class="headerlink" href="#nfs-setup" title="Permalink to this headline">¶</a></h2>
+<p>On the machine hosting <strong>GeoServer main</strong>, we suppose that the “geoserver data dir” is located in <code class="docutils literal notranslate"><span class="pre">/opt/geoserver_datadir</span></code>.
+This directory will be exposed to the slaves through NFS:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">nfs</span><span class="o">-</span><span class="n">common</span> <span class="n">nfs</span><span class="o">-</span><span class="n">kernel</span><span class="o">-</span><span class="n">server</span> <span class="n">git</span><span class="o">-</span><span class="n">core</span>
+<span class="n">echo</span> <span class="s1">&#39;/opt/geoserver_datadir IP_S1(sync,rw,no_subtree_check)&#39;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">exports</span>
+<span class="n">echo</span> <span class="s1">&#39;/opt/geoserver_datadir IP_S2(sync,rw,no_subtree_check)&#39;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">exports</span>
+<span class="n">service</span> <span class="n">nfs</span><span class="o">-</span><span class="n">kernel</span><span class="o">-</span><span class="n">server</span> <span class="n">restart</span>
+</pre></div>
+</div>
+<p>… in which <code class="docutils literal notranslate"><span class="pre">IP_S1</span></code> and <code class="docutils literal notranslate"><span class="pre">IP_S2</span></code> are the IP addresses of the two slave machines (but there could be more).</p>
+<p>On the slave instances:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">geoserver_datadir</span>
+<span class="n">echo</span> <span class="s1">&#39;IP_MASTER:/opt/geoserver_datadir /opt/geoserver_datadir nfs _netdev 0 0&#39;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">fstab</span>
+<span class="n">mount</span> <span class="o">-</span><span class="n">a</span>
+</pre></div>
+</div>
+<p>… where <code class="docutils literal notranslate"><span class="pre">IP_MASTER</span></code> is the IP adress of the master instance.</p>
+<p>Congrats, the data directory is now synchronized across all instances through NFS !</p>
+<p>When GIS data are not stored in a database, the same steps should be repeated in order to create a shared geodata repository.</p>
+</section>
+<section id="keeping-configurations-in-sync">
+<h2>Keeping configurations in sync<a class="headerlink" href="#keeping-configurations-in-sync" title="Permalink to this headline">¶</a></h2>
+<p>Every time GeoServer configuration changes (either through GeoServer admin GUI, or through its REST interface), the “data dir” is altered and its <code class="docutils literal notranslate"><span class="pre">global.xml</span></code> file is updated.
+With <code class="docutils literal notranslate"><span class="pre">incrond</span></code>, updates to this file are detected and slaves get notified through the use of a <a class="reference external" href="https://gist.github.com/fvanderbiest/f5d5e467c7ca004ce73b">simple python script</a>.</p>
+<p>Here are the steps:</p>
+<ul class="simple">
+<li><p>install <code class="docutils literal notranslate"><span class="pre">incrond</span></code> with <code class="docutils literal notranslate"><span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">incron</span></code></p></li>
+<li><p>download this <a class="reference external" href="https://gist.github.com/fvanderbiest/f5d5e467c7ca004ce73b">script</a> in /root, and register the slave IPs in it</p></li>
+<li><p>allow root to use incrond: <code class="docutils literal notranslate"><span class="pre">echo</span> <span class="pre">'root'</span> <span class="pre">&gt;</span> <span class="pre">/etc/incron.allow</span></code></p></li>
+</ul>
+<p>In the file opened by the <code class="docutils literal notranslate"><span class="pre">incrontab</span> <span class="pre">-e</span></code> command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">geoserver_datadir</span><span class="o">/</span><span class="k">global</span><span class="o">.</span><span class="n">xml</span> <span class="n">IN_MODIFY</span> <span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">refresh</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>Finally restart the service with <code class="docutils literal notranslate"><span class="pre">service</span> <span class="pre">incron</span> <span class="pre">restart</span></code></p>
+</section>
+<section id="load-balancer">
+<h2>Load-balancer<a class="headerlink" href="#load-balancer" title="Permalink to this headline">¶</a></h2>
+<p>In a typical setup, the load balancer is installed on the same machine as tomcat-proxycas.</p>
+<p>Here are two configuration examples:</p>
+<ul class="simple">
+<li><p>one <a class="reference external" href="https://gist.github.com/fvanderbiest/bb703531dc085427eed5">based on HAProxy</a></p></li>
+<li><p>an other one <a class="reference external" href="https://gist.github.com/fvanderbiest/310b380488d73347acbc">using Nginx</a></p></li>
+</ul>
+</section>
+<section id="security-proxy">
+<h2>Security Proxy<a class="headerlink" href="#security-proxy" title="Permalink to this headline">¶</a></h2>
+<p>In your configuration profile’s <code class="docutils literal notranslate"><span class="pre">GenerateConfig.groovy</span></code> file, the <code class="docutils literal notranslate"><span class="pre">proxy.mapping</span></code> option should include the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">entry</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;geoserver&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;http://LOAD_BALANCER_IP:LOAD_BALANCER_PORT/geoserver/&quot;</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+<p>instead of the default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">entry</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;geoserver&quot;</span>     <span class="n">value</span><span class="o">=</span><span class="s2">&quot;geoserverTarget/geoserver/&quot;</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+<p>Redeploy the security proxy to take into account this change, and test everything is working as expected.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/tutorials/geoserver_clustering.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

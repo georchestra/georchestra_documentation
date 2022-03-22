@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Setting up OpenLDAP and a basic LDAP tree &#8212; Python  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="setting-up-openldap-and-a-basic-ldap-tree">
+<h1>Setting up OpenLDAP and a basic LDAP tree<a class="headerlink" href="#setting-up-openldap-and-a-basic-ldap-tree" title="Permalink to this headline">¶</a></h1>
+<p>There are 2 main ways of having OpenLDAP configured :</p>
+<ul class="simple">
+<li><p>One using a single conf file (on debian/ubuntu systems, located in /etc/ldap/sldapd.conf)</p></li>
+<li><p>A new one which tends to store the configuration into a specific LDAP branch (name cn=config), and composed of several files located generally into /etc/ldap/slapd.d).</p></li>
+</ul>
+<p>We document here the second case (slapd.d-style configuration).</p>
+<p>Note : It’s also possible to delegate the authentication of certain users to a remote Active Directory or LDAP, see the <a class="reference internal" href="../tutorials/sasl.html"><span class="doc std std-doc">SASL Doc page</span></a>.</p>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">slapd</span> <span class="n">ldap</span><span class="o">-</span><span class="n">utils</span>
+</pre></div>
+</div>
+<p>You will need to provide the LDAP administrator password. Choose a strong one.</p>
+<p>Before creating the LDAP tree, you should have a look at the <span class="xref myst">users and groups</span> we’ll be adding.</p>
+</section>
+<section id="database-entry">
+<h2>Database entry<a class="headerlink" href="#database-entry" title="Permalink to this headline">¶</a></h2>
+<p>The file <a class="reference download internal" download="" href="../_downloads/396f8953f85c092c10c9bf275ab1b2ec/bootstrap.ldif"><span class="xref download myst">bootstrap.ldif</span></a> creates the database and an administrator account (<code class="docutils literal notranslate"><span class="pre">cn=admin,dc=georchestra,dc=org</span></code>) with a password set by default to <code class="docutils literal notranslate"><span class="pre">secret</span></code>. You should change it.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">ldapadd</span> <span class="o">-</span><span class="n">Y</span> <span class="n">EXTERNAL</span> <span class="o">-</span><span class="n">H</span> <span class="n">ldapi</span><span class="p">:</span><span class="o">///</span> <span class="o">-</span><span class="n">f</span> <span class="n">bootstrap</span><span class="o">.</span><span class="n">ldif</span>
+</pre></div>
+</div>
+<p>If successful, the above command should display: <code class="docutils literal notranslate"><span class="pre">adding</span> <span class="pre">new</span> <span class="pre">entry</span> <span class="pre">&quot;olcDatabase=mdb,cn=config&quot;</span></code>.</p>
+</section>
+<section id="root-dn">
+<h2>Root DN<a class="headerlink" href="#root-dn" title="Permalink to this headline">¶</a></h2>
+<p>To create the root DN, use the <a class="reference download internal" download="" href="../_downloads/bb4b0423b2620e06b47f2f6cb50e0e8c/root.ldif"><span class="xref download myst">root.ldif</span></a> file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ldapadd</span> <span class="o">-</span><span class="n">D</span><span class="s2">&quot;cn=admin,dc=georchestra,dc=org&quot;</span> <span class="o">-</span><span class="n">W</span> <span class="o">-</span><span class="n">f</span> <span class="n">root</span><span class="o">.</span><span class="n">ldif</span>
+</pre></div>
+</div>
+<p>This will ask the password for the <code class="docutils literal notranslate"><span class="pre">cn=admin,dc=georchestra,dc=org</span></code> dn, which was set with the previous command.</p>
+</section>
+<section id="groupofmembers-objectclass">
+<h2>groupOfMembers objectClass<a class="headerlink" href="#groupofmembers-objectclass" title="Permalink to this headline">¶</a></h2>
+<p>Groups in geOrchestra are instances of groupOfMembers objects, which allows empty groups (contrary to groupOfNames, which were used in previous geOrchestra releases).
+This objectClass comes from rfc2307bis and is not available by default in OpenLDAP. As a result, we need to import its structure into the <code class="docutils literal notranslate"><span class="pre">cn=config</span></code> database, using the <a class="reference download internal" download="" href="../_downloads/73ff42bedfe76b57a98b2684becc96a3/groupofmembers.ldif"><span class="xref download myst">groupofmembers.ldif</span></a> file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">ldapadd</span> <span class="o">-</span><span class="n">Y</span> <span class="n">EXTERNAL</span> <span class="o">-</span><span class="n">H</span> <span class="n">ldapi</span><span class="p">:</span><span class="o">///</span> <span class="o">-</span><span class="n">f</span> <span class="n">groupofmembers</span><span class="o">.</span><span class="n">ldif</span>
+</pre></div>
+</div>
+</section>
+<section id="the-memberof-overlay">
+<h2>The “memberof” overlay<a class="headerlink" href="#the-memberof-overlay" title="Permalink to this headline">¶</a></h2>
+<p>The “memberof” overlay is required to check if a user is a member of a given group.
+Use the <a class="reference download internal" download="" href="../_downloads/4f7611ac96bd1a3b497d1289f48f09ea/memberof.ldif"><span class="xref download myst">memberof.ldif</span></a> file to add the module and configure the overlay.</p>
+<p>Before inserting it, watch for the database name it targets… currently <code class="docutils literal notranslate"><span class="pre">olcDatabase={1}mdb,cn=config</span></code>.
+If the database you created with the <code class="docutils literal notranslate"><span class="pre">bootstrap.ldif</span></code> file is named differently, please adjust the <code class="docutils literal notranslate"><span class="pre">memberof.ldif</span></code> file content accordingly.</p>
+<p>Then:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">ldapadd</span> <span class="o">-</span><span class="n">Y</span> <span class="n">EXTERNAL</span> <span class="o">-</span><span class="n">H</span> <span class="n">ldapi</span><span class="p">:</span><span class="o">///</span> <span class="o">-</span><span class="n">f</span> <span class="n">memberof</span><span class="o">.</span><span class="n">ldif</span>
+</pre></div>
+</div>
+<p>Caution: by default, we’re adding the overlay to the <code class="docutils literal notranslate"><span class="pre">{1}mdb,cn=config</span></code> database. You may have to customize this if your setup is different (having a look at the <code class="docutils literal notranslate"><span class="pre">/etc/ldap/slapd.d/cn=config/</span></code> directory).</p>
+<p>After a fresh slapd install, you might already have a database set up for you, depending on how the package manager of the distribution is configured, or if the package planned to do so.</p>
+<p>To check the database number in your LDAP setup, you can go through the /etc/ldap/slapd.d/cn=config/ subdirectory and check the files olcDatabase={x}mdb.ldif”. The different files should contain a olcSuffix attribute. The expected geOrchestra database is the one which contains a olcSuffix: dc=georchestra,dc=org.</p>
+<p>The memberOf.ldif file should match the expected database number in OpenLDAP, and you might need to adapt this LDIF file.</p>
+</section>
+<section id="add-sshpublickey-objectclass">
+<h2>Add “sshPublicKey” objectClass<a class="headerlink" href="#add-sshpublickey-objectclass" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference download internal" download="" href="../_downloads/759aab037b85c59459aa480dfda934db/openssh.ldif"><span class="xref download myst">openssh.ldif</span></a> file optionally creates the “sshPublicKey” objectClass, which is interesting to store <code class="docutils literal notranslate"><span class="pre">sshPublicKey</span></code> in the LDAP:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">ldapadd</span> <span class="o">-</span><span class="n">Y</span> <span class="n">EXTERNAL</span> <span class="o">-</span><span class="n">H</span> <span class="n">ldapi</span><span class="p">:</span><span class="o">///</span> <span class="o">-</span><span class="n">f</span> <span class="n">openssh</span><span class="o">.</span><span class="n">ldif</span>
+</pre></div>
+</div>
+</section>
+<section id="add-the-georchestra-specific-ldap-schemas">
+<h2>Add the “georchestra-specific” LDAP schemas<a class="headerlink" href="#add-the-georchestra-specific-ldap-schemas" title="Permalink to this headline">¶</a></h2>
+<p>The required <a class="reference download internal" download="" href="../_downloads/adc479ce415d9d2095d71bbf61e9d7cf/georchestraSchema.ldif"><span class="xref download myst">georchestraSchema.ldif</span></a> file creates the “georchestraUser” and “georchestraOrg” objectClasses:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">ldapadd</span> <span class="o">-</span><span class="n">Y</span> <span class="n">EXTERNAL</span> <span class="o">-</span><span class="n">H</span> <span class="n">ldapi</span><span class="p">:</span><span class="o">///</span> <span class="o">-</span><span class="n">f</span> <span class="n">georchestraSchema</span><span class="o">.</span><span class="n">ldif</span>
+</pre></div>
+</div>
+</section>
+<section id="georchestra-users-and-groups">
+<h2>geOrchestra users and groups<a class="headerlink" href="#georchestra-users-and-groups" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference download internal" download="" href="../_downloads/4490b9421117cee03159703903f76631/georchestra.ldif"><span class="xref download myst">georchestra.ldif</span></a> file creates the default geOrchestra users &amp; groups:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ldapadd</span> <span class="o">-</span><span class="n">D</span><span class="s2">&quot;cn=admin,dc=georchestra,dc=org&quot;</span> <span class="o">-</span><span class="n">W</span> <span class="o">-</span><span class="n">f</span> <span class="n">georchestra</span><span class="o">.</span><span class="n">ldif</span>
+</pre></div>
+</div>
+<p>This will also ask the password for the <code class="docutils literal notranslate"><span class="pre">cn=admin,dc=georchestra,dc=org</span></code> dn.</p>
+<p>Note that you are free to customize the users (entries under the “users” OrganizationUnit) to fit your needs, provided you keep the required <code class="docutils literal notranslate"><span class="pre">geoserver_privileged_user</span></code>.</p>
+</section>
+</section>
+<section id="managing-the-directory">
+<h1>Managing the directory<a class="headerlink" href="#managing-the-directory" title="Permalink to this headline">¶</a></h1>
+<p>To manage the directory, there are (at least) 3 options:</p>
+<ul class="simple">
+<li><p>from the command line, use ldapvi (install with <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">ldapvi</span></code>):</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ldapvi</span> <span class="o">--</span><span class="n">host</span> <span class="n">localhost</span> <span class="o">-</span><span class="n">D</span> <span class="s2">&quot;cn=admin,dc=georchestra,dc=org&quot;</span> <span class="o">-</span><span class="n">w</span> <span class="s2">&quot;secret&quot;</span> <span class="o">-</span><span class="n">b</span> <span class="s2">&quot;dc=georchestra,dc=org&quot;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><a class="reference external" href="http://directory.apache.org/studio/">Apache Directory Studio</a>, a powerful desktop client.</p></li>
+<li><p>our own <span class="xref myst">console</span> web application, available at <code class="docutils literal notranslate"><span class="pre">/console/manager/</span></code> to  members of the <code class="docutils literal notranslate"><span class="pre">SUPERUSER</span></code> group, is probably the easiest one.</p></li>
+</ul>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/setup/openldap.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

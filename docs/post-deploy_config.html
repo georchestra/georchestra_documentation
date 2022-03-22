@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Post-deploy configuration &#8212; Python  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="post-deploy-configuration">
+<h1>Post-deploy configuration<a class="headerlink" href="#post-deploy-configuration" title="Permalink to this headline">¶</a></h1>
+<p>This is a highly recommended reading !</p>
+<section id="geoserver">
+<h2>GeoServer<a class="headerlink" href="#geoserver" title="Permalink to this headline">¶</a></h2>
+<section id="proxy-base-url">
+<h3>Proxy base URL<a class="headerlink" href="#proxy-base-url" title="Permalink to this headline">¶</a></h3>
+<p>For GeoServer, the proxy base url can be set in the admin UI, via Settings &gt; Global &gt; Proxy URL.
+This is one of the first thing to do once your geoserver instance is deployed, or you won’t be able to add local layers using our viewer.</p>
+<p>The proxy base URL should be set to something like this: http(s)://your.server.fqdn/geoserver without a trailing slash.
+After saving the form, you should check in the WMS capabilities that the service URLs are as expected.</p>
+</section>
+<section id="supported-srs">
+<h3>Supported SRS<a class="headerlink" href="#supported-srs" title="Permalink to this headline">¶</a></h3>
+<p>By default, GeoServer supports more than 2000 spatial reference systems.<br />
+This is really a lot, but you’re probably not interested in 99% of them, and they clutter your GetCapabilities documents.</p>
+<p>It’s easy to restrict the list to the most useful ones: in the WMS and WCS admin pages, fill the “Limited SRS list” textarea with, eg:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2154</span><span class="p">,</span> <span class="mi">3857</span><span class="p">,</span> <span class="mi">3942</span><span class="p">,</span> <span class="mi">3943</span><span class="p">,</span> <span class="mi">3944</span><span class="p">,</span> <span class="mi">3945</span><span class="p">,</span> <span class="mi">3946</span><span class="p">,</span> <span class="mi">3947</span><span class="p">,</span> <span class="mi">3948</span><span class="p">,</span> <span class="mi">3949</span><span class="p">,</span> <span class="mi">3950</span><span class="p">,</span> <span class="mi">4171</span><span class="p">,</span> 
+<span class="mi">4258</span><span class="p">,</span> <span class="mi">4326</span><span class="p">,</span> <span class="mi">23030</span><span class="p">,</span> <span class="mi">23031</span><span class="p">,</span> <span class="mi">23032</span><span class="p">,</span> <span class="mi">32630</span><span class="p">,</span> <span class="mi">32631</span><span class="p">,</span> <span class="mi">32632</span><span class="p">,</span> <span class="mi">4171</span><span class="p">,</span> <span class="mi">4271</span><span class="p">,</span> <span class="mi">3758</span>
+</pre></div>
+</div>
+<p>… and don’t forget to submit the form.</p>
+</section>
+</section>
+<section id="standalone-geowebcache">
+<h2>Standalone GeoWebCache<a class="headerlink" href="#standalone-geowebcache" title="Permalink to this headline">¶</a></h2>
+<p>For the standalone GeoWebCache, the proxy should be automatically configured (via <a class="reference external" href="https://github.com/georchestra/datadir/blob/22.0/geowebcache/geowebcache.properties">geowebcache.properties</a>).</p>
+</section>
+<section id="geonetwork">
+<h2>GeoNetwork<a class="headerlink" href="#geonetwork" title="Permalink to this headline">¶</a></h2>
+<p>On the  <code class="docutils literal notranslate"><span class="pre">/geonetwork/srv/eng/config</span></code> page, you should:</p>
+<ul class="simple">
+<li><p>fill the “Site” and “Server” sections.</p></li>
+</ul>
+<p>In the server section, fill the fields according to your setup, eg:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Preferred Protocol  HTTP
+Host                georchestra.mydomain.org
+Port                80 	￼     
+Secure Port	    8443
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>enable “XLINK RESOLVER”</p></li>
+<li><p>enable INSPIRE + search panel</p></li>
+<li><p>check “use Proxy” in case your connection to the internet is proxied</p></li>
+<li><p>set feedback email</p></li>
+</ul>
+</section>
+<section id="geofence">
+<h2>GeoFence<a class="headerlink" href="#geofence" title="Permalink to this headline">¶</a></h2>
+<p>In GeoFence, you should configure your geoserver instance with:</p>
+<ul class="simple">
+<li><p>instance name = default-gs</p></li>
+<li><p>description = my geoserver instance</p></li>
+<li><p>base url = http://georchestra.mydomain.org/geoserver</p></li>
+<li><p>username = geoserver_privileged_user</p></li>
+<li><p>password = the LDAP password of the above user, which should be the same as <a class="reference external" href="https://github.com/georchestra/datadir/blob/22.0/README.md">the one referenced in your datadir</a>.</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/post-deploy_config.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

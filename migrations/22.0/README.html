@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>From 20.X to 22.x &#8212; Python  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="from-20-x-to-22-x">
+<h1>From 20.X to 22.x<a class="headerlink" href="#from-20-x-to-22-x" title="Permalink to this headline">¶</a></h1>
+<section id="geonetwork-4">
+<h2>GeoNetwork 4<a class="headerlink" href="#geonetwork-4" title="Permalink to this headline">¶</a></h2>
+<section id="link-to-external-viewer">
+<h3>Link to external viewer<a class="headerlink" href="#link-to-external-viewer" title="Permalink to this headline">¶</a></h3>
+<p>To use MapStore as GeoNetwork’s default viewer:</p>
+<ul class="simple">
+<li><p>open the <code class="docutils literal notranslate"><span class="pre">Admin</span> <span class="pre">console</span></code>-&gt;<code class="docutils literal notranslate"><span class="pre">User</span> <span class="pre">Interface</span></code> at /geonetwork/srv/fre/admin.console#/settings/ui</p></li>
+<li><p>search for the “viewer” section</p></li>
+<li><p>check the “Use an external viewer” box</p></li>
+<li><p>update the “Viewer URL template” field to the following:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">mapstore</span><span class="o">/</span><span class="c1">#?actions=[{&quot;type&quot;:&quot;CATALOG:ADD_LAYERS_FROM_CATALOGS&quot;,&quot;layers&quot;:[${service.name}],&quot;sources&quot;:[${service.url}]}]</span>
+
+</pre></div>
+</div>
+</section>
+<section id="redundant-authentication-panel">
+<h3>Redundant authentication panel<a class="headerlink" href="#redundant-authentication-panel" title="Permalink to this headline">¶</a></h3>
+<p><em>geOrchestra</em> already handles the authentication of the user for the underlying <em>GeoNetwork 4</em>. As a result, new installs of <em>geOrchestra</em> should remove the authentication panel from the embedded <em>GeoNetwork 4</em> (see <a class="reference external" href="https://github.com/georchestra/geonetwork/pull/187">#187</a>).</p>
+<p>For existing <em>GeoNetwork 4</em> installations, this can be done by unticking the “Authentication” checkbox from <code class="docutils literal notranslate"><span class="pre">Admin</span> <span class="pre">console</span></code>-&gt;<code class="docutils literal notranslate"><span class="pre">User</span> <span class="pre">Interface</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>☐ Authentication
+</pre></div>
+</div>
+</section>
+<section id="authtype">
+<h3>authtype<a class="headerlink" href="#authtype" title="Permalink to this headline">¶</a></h3>
+<p>When migrating from GeoNetwork <code class="docutils literal notranslate"><span class="pre">3.8.x</span></code> to <code class="docutils literal notranslate"><span class="pre">4.0.x</span></code>, there is one specific database migration to be performed by hand:
+previously when users were connecting to the catalogue for the first time, they were created into the GeoNetwork database
+with an <code class="docutils literal notranslate"><span class="pre">authtype</span></code> set to ‘LDAP’. This column of the <code class="docutils literal notranslate"><span class="pre">geonetwork.users</span></code> table has to be set to ‘’ for these ones:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">UPDATE</span><span class="w"> </span><span class="n">geonetwork</span><span class="p">.</span><span class="n">users</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">authtype</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="openldap">
+<h2>OpenLDAP<a class="headerlink" href="#openldap" title="Permalink to this headline">¶</a></h2>
+<p>The main modification made in this release was to:</p>
+<ul class="simple">
+<li><p>introduce a new object class <code class="docutils literal notranslate"><span class="pre">georchestraRole</span></code> on the roles (branch <code class="docutils literal notranslate"><span class="pre">ou=roles</span></code>)</p></li>
+<li><p>introduce on each object class from the georchestra custom schema a new
+attribute <code class="docutils literal notranslate"><span class="pre">georchestraObjectIdentifier</span></code>.</p></li>
+</ul>
+<p>This new attribute should take a unique identifier in the form of a <a class="reference external" href="https://en.wikipedia.org/wiki/Universally_unique_identifier">uuid</a>.</p>
+<p>This change was motivated to be able to synchronize objects on GeoNetwork, and rely
+on a stable identifier between the LDAP and the database in a more reliable way.</p>
+<p>Below is a suggested modification procedure:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># dumps / backup the current LDAP tree before proceeding:</span>
+
+<span class="k">for</span> i <span class="k">in</span> orgs pendingorgs pendingusers roles users <span class="p">;</span>
+  <span class="k">do</span> ldapsearch -Dcn<span class="o">=</span>admin,dc<span class="o">=</span>georchestra,dc<span class="o">=</span>org -w secret -H ldap://localhost:389 -bou<span class="o">=</span><span class="si">${</span><span class="nv">i</span><span class="si">}</span>,dc<span class="o">=</span>georchestra,dc<span class="o">=</span>org &gt; <span class="si">${</span><span class="nv">i</span><span class="si">}</span>.ldif <span class="p">;</span>
+<span class="k">done</span>
+</pre></div>
+</div>
+<p>Then the georchestra openLDAP schema should be patched. To do so, we first need
+to figure out which identifier the schema has, using the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ldapsearch -Y EXTERNAL -H ldapi:/// -bcn<span class="o">=</span>schema,cn<span class="o">=</span>config <span class="s1">&#39;cn=*georchestra&#39;</span> <span class="s1">&#39;cn&#39;</span>
+</pre></div>
+</div>
+<p>The output will be likely the following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>...<span class="o">]</span>
+<span class="c1"># {5}georchestra, schema, config</span>
+dn: <span class="nv">cn</span><span class="o">={</span><span class="m">5</span><span class="o">}</span>georchestra,cn<span class="o">=</span>schema,cn<span class="o">=</span>config
+cn: <span class="o">{</span><span class="m">5</span><span class="o">}</span>georchestra
+<span class="o">[</span>...<span class="o">]</span>
+</pre></div>
+</div>
+<p>In the following, we are supposing the schema is on the identifier <code class="docutils literal notranslate"><span class="pre">5</span></code> in the internal LDAP configuration tree.
+the <code class="docutils literal notranslate"><span class="pre">heredocs</span></code> below should be adapted consequently.</p>
+<section id="adding-the-unique-identifier-attribute">
+<h3>Adding the unique identifier attribute<a class="headerlink" href="#adding-the-unique-identifier-attribute" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat <span class="s">&lt;&lt; EOF &gt;  add-uuidattr.ldif</span>
+<span class="s">dn: cn={5}georchestra, cn=schema, cn=config</span>
+<span class="s">changetype: modify</span>
+<span class="s">add: olcAttributeTypes</span>
+<span class="s">olcAttributeTypes: ( 1.3.6.1.4.1.53611.1.2.2</span>
+<span class="s">    NAME &#39;georchestraObjectIdentifier&#39;</span>
+<span class="s">    DESC &#39;A UUID identifying the geOrchestra object&#39;</span>
+<span class="s">    SYNTAX 1.3.6.1.1.16.1</span>
+<span class="s">    SINGLE-VALUE  )</span>
+<span class="s">EOF</span>
+
+
+ldapmodify -Y EXTERNAL -H ldapi:/// -f add-uuidattr.ldif
+rm add-uuidattr.ldif
+</pre></div>
+</div>
+</section>
+<section id="adding-the-georchestrarole-objectclass-to-the-schema">
+<h3>Adding the “georchestraRole” objectClass to the schema<a class="headerlink" href="#adding-the-georchestrarole-objectclass-to-the-schema" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat <span class="s">&lt;&lt;EOF &gt; add-geor-role-class.ldif</span>
+<span class="s">dn: cn={5}georchestra, cn=schema, cn=config</span>
+<span class="s">changetype: modify</span>
+<span class="s">add: olcObjectClasses</span>
+<span class="s">olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.3</span>
+<span class="s">   NAME &#39;georchestraRole&#39;</span>
+<span class="s">   DESC &#39;Uniquely identifiable georchestra role&#39;</span>
+<span class="s">   SUP top</span>
+<span class="s">   AUXILIARY</span>
+<span class="s">   MAY (georchestraObjectIdentifier))</span>
+<span class="s">EOF</span>
+
+ldapmodify -Y EXTERNAL -H ldapi:/// -f add-geor-role-class.ldif
+rm add-geor-role-class.ldif
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="adding-the-identifier-to-the-2-existing-object-classes">
+<h1>Adding the identifier to the 2 existing object classes<a class="headerlink" href="#adding-the-identifier-to-the-2-existing-object-classes" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat <span class="s">&lt;&lt;EOF &gt; modify-geor-classes.ldif</span>
+<span class="s">dn: cn={5}georchestra, cn=schema, cn=config</span>
+<span class="s">changetype: modify</span>
+<span class="s">replace: olcObjectClasses</span>
+<span class="s">olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.1</span>
+<span class="s">    NAME &#39;georchestraUser&#39;</span>
+<span class="s">    DESC &#39;georchestra user&#39;</span>
+<span class="s">    SUP top</span>
+<span class="s">    AUXILIARY</span>
+<span class="s">    MAY ( privacyPolicyAgreementDate $ knowledgeInformation $ georchestraObjectIdentifier ))</span>
+<span class="s">olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.2</span>
+<span class="s">    NAME &#39;georchestraOrg&#39;</span>
+<span class="s">    DESC &#39;georchestra org&#39;</span>
+<span class="s">    SUP top</span>
+<span class="s">    AUXILIARY</span>
+<span class="s">    MAY (jpegphoto $ labeledURI $ knowledgeInformation $ georchestraObjectIdentifier))</span>
+<span class="s">EOF</span>
+
+ldapmodify -Y EXTERNAL -H ldapi:/// -f modify-geor-classes.ldif
+rm modify-geor-classes.ldif
+</pre></div>
+</div>
+<section id="modifying-existing-objects-from-the-ldap-tree">
+<h2>Modifying existing objects from the LDAP tree<a class="headerlink" href="#modifying-existing-objects-from-the-ldap-tree" title="Permalink to this headline">¶</a></h2>
+<p>The following commands will require the <code class="docutils literal notranslate"><span class="pre">uuid-runtime</span></code> debian package,
+which provides the <code class="docutils literal notranslate"><span class="pre">uuidgen</span></code> command to generate UUIDs.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Modifies the roles and introduce a unique identifier</span>
+ldapsearch -x -H ldap://localhost:389 -w secret -Dcn<span class="o">=</span>admin,dc<span class="o">=</span>georchestra,dc<span class="o">=</span>org -o ldif-wrap<span class="o">=</span>no -b <span class="s2">&quot;ou=roles,dc=georchestra,dc=org&quot;</span> dn <span class="p">|</span>grep <span class="s2">&quot;^dn: cn=&quot;</span> <span class="p">|</span> <span class="k">while</span> <span class="nb">read</span> f <span class="p">;</span> <span class="k">do</span>
+    <span class="nb">printf</span> <span class="s2">&quot;</span><span class="nv">$f</span><span class="s2">\nchangetype: modify\nadd: objectClass\nobjectClass: georchestraRole\n-\nadd: georchestraObjectIdentifier\ngeorchestraObjectIdentifier: </span><span class="k">$(</span>uuidgen<span class="k">)</span><span class="s2">\n\n&quot;</span> &gt;&gt; modify-roles.ldif
+<span class="k">done</span>
+
+<span class="c1"># pendingorgs</span>
+ldapsearch -x -H ldap://localhost:389 -w secret -Dcn<span class="o">=</span>admin,dc<span class="o">=</span>georchestra,dc<span class="o">=</span>org -o ldif-wrap<span class="o">=</span>no -b <span class="s2">&quot;ou=pendingorgs,dc=georchestra,dc=org&quot;</span> <span class="nv">ObjectClass</span><span class="o">=</span>georchestraOrg o <span class="p">|</span>grep <span class="s2">&quot;^dn: o=&quot;</span> <span class="p">|</span> <span class="k">while</span> <span class="nb">read</span> f <span class="p">;</span> <span class="k">do</span>
+    <span class="nb">printf</span> <span class="s2">&quot;</span><span class="nv">$f</span><span class="s2">\nchangetype:modify\nadd: georchestraObjectIdentifier\ngeorchestraObjectIdentifier: </span><span class="k">$(</span>uuidgen<span class="k">)</span><span class="s2">\n\n&quot;</span> &gt;&gt; modify-pendingorgs.ldif
+<span class="k">done</span>
+
+<span class="c1"># orgs</span>
+ldapsearch -x -H ldap://localhost:389 -w secret -Dcn<span class="o">=</span>admin,dc<span class="o">=</span>georchestra,dc<span class="o">=</span>org -o ldif-wrap<span class="o">=</span>no -b <span class="s2">&quot;ou=orgs,dc=georchestra,dc=org&quot;</span> <span class="nv">ObjectClass</span><span class="o">=</span>georchestraOrg o <span class="p">|</span>grep <span class="s2">&quot;^dn: o=&quot;</span> <span class="p">|</span> <span class="k">while</span> <span class="nb">read</span> f <span class="p">;</span> <span class="k">do</span>
+    <span class="nb">printf</span> <span class="s2">&quot;</span><span class="nv">$f</span><span class="s2">\nchangetype: modify\nadd: georchestraObjectIdentifier\ngeorchestraObjectIdentifier: </span><span class="k">$(</span>uuidgen<span class="k">)</span><span class="s2">\n\n&quot;</span> &gt;&gt; modify-orgs.ldif
+<span class="k">done</span>
+
+<span class="c1"># pendingusers</span>
+ldapsearch -x -H ldap://localhost:389 -w secret -Dcn<span class="o">=</span>admin,dc<span class="o">=</span>georchestra,dc<span class="o">=</span>org -o ldif-wrap<span class="o">=</span>no -b <span class="s2">&quot;ou=pendingusers,dc=georchestra,dc=org&quot;</span> <span class="nv">ObjectClass</span><span class="o">=</span>georchestraUser uid <span class="p">|</span>grep <span class="s2">&quot;^dn: uid=&quot;</span> <span class="p">|</span> <span class="k">while</span> <span class="nb">read</span> f <span class="p">;</span> <span class="k">do</span>
+    <span class="nb">printf</span> <span class="s2">&quot;</span><span class="nv">$f</span><span class="s2">\nchangetype: modify\nadd: georchestraObjectIdentifier\ngeorchestraObjectIdentifier: </span><span class="k">$(</span>uuidgen<span class="k">)</span><span class="s2">\n\n&quot;</span> &gt;&gt; modify-pendingusers.ldif
+<span class="k">done</span>
+
+<span class="c1"># users</span>
+ldapsearch -x -H ldap://localhost:389 -w secret -Dcn<span class="o">=</span>admin,dc<span class="o">=</span>georchestra,dc<span class="o">=</span>org -o ldif-wrap<span class="o">=</span>no -b <span class="s2">&quot;ou=users,dc=georchestra,dc=org&quot;</span> <span class="nv">ObjectClass</span><span class="o">=</span>georchestraUser uid <span class="p">|</span>grep <span class="s2">&quot;^dn: uid=&quot;</span> <span class="p">|</span> <span class="k">while</span> <span class="nb">read</span> f <span class="p">;</span> <span class="k">do</span>
+    <span class="nb">printf</span> <span class="s2">&quot;</span><span class="nv">$f</span><span class="s2">\nchangetype: modify\nadd: georchestraObjectIdentifier\ngeorchestraObjectIdentifier: </span><span class="k">$(</span>uuidgen<span class="k">)</span><span class="s2">\n\n&quot;</span> &gt;&gt; modify-users.ldif
+<span class="k">done</span>
+
+<span class="c1"># then apply the modifications (the order does not matter)</span>
+
+<span class="k">for</span> i <span class="k">in</span> modify-*.ldif <span class="p">;</span> <span class="k">do</span> ldapmodify -H ldap://localhost -x -w secret -Dcn<span class="o">=</span>admin,dc<span class="o">=</span>georchestra,dc<span class="o">=</span>org -f <span class="si">${</span><span class="nv">i</span><span class="si">}</span> <span class="p">;</span> <span class="k">done</span>
+
+rm modify-*.ldif
+</pre></div>
+</div>
+</section>
+<section id="cas-6">
+<h2>CAS 6<a class="headerlink" href="#cas-6" title="Permalink to this headline">¶</a></h2>
+<p>Existing CAS webapp has been removed. The new CAS authentication for georchestra lives in its <a class="reference external" href="https://github.com/georchestra/georchestra-cas-server">own repository</a>.</p>
+<p>For more information on the upgrade from CAS 4 to CAS 6, please refer to <a class="reference external" href="https://github.com/georchestra/georchestra/issues/2799">issue 2799</a>.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/22.0/README.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
