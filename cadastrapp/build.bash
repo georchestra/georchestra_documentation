@@ -22,7 +22,7 @@ git pull
 liste_versions=()
 
 # une liste de tags
-tags_v2="`git tag -l "*v2.*"`"
+tags_v2="`git tag -l "*[v|V]2.*"`"
 for tag in ${tags_v2}; do
   #echo $tag
   liste_versions+=($tag)
