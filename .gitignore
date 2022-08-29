@@ -1,6 +1,8 @@
 
 .venv/
 
+modules/
+
 cadastrapp/repo/
 cadastrapp/html/
 
