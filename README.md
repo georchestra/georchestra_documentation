@@ -11,13 +11,26 @@ Ce dépôt rassemble des outils pour builder les documentations rédigées et g�
 
 ## Installation and configuration
 
+### Sous Linux
+
+On installe le paquet sphinx.
 
 ```bash
-git clone …
+sudo apt install python3-sphinx
+...
+sphinx-build --version
+sphinx-build 1.8.5
 ```
 
+On clone ce dépôt.
 
-```python
+```bash
+git clone https://github.com/georchestra/georchestra_documentation.git
+```
+
+On se configure un environnement virtuel Python.
+
+```bash
 python --version
 Python 3.9.9
 
@@ -27,7 +40,11 @@ source .venv/bin/activate
 
 # on upgrade pip
 python -m pip install --upgrade pip
+```
 
+Maintenant au choix on installe manuellement :
+
+```bash
 # on installe GitPython
 python -m pip install gitpython
 
@@ -43,6 +60,13 @@ Successfully installed Jinja2-3.0.3 MarkupSafe-2.0.1 Pygments-2.11.2 alabaster-0
 # installation des thèmes sphinx
 python -m pip install sphinx-rtd-theme
 ```
+
+Soit on utilise les requirements :
+
+```bash
+python -m pip install -r requirements_ubuntu_2004.txt
+```
+
 
 ## Utilisation
 
