@@ -23,13 +23,6 @@
 
 import os
 import re
-
-# The full version, including alpha/beta/rc tags.
-release = re.sub('^v', '', os.popen('git describe').read().strip())
-# The short X.Y version.
-version = release
-
-
 from datetime import datetime
 
 currentSecond= datetime.now().second
@@ -104,37 +97,25 @@ except NameError:
    html_context = dict()
 html_context['display_lower_left'] = True
  
-if 'REPO_NAME' in os.environ:
-   REPO_NAME = os.environ['REPO_NAME']
-else:
-   REPO_NAME = ''
- 
 
- 
-# SET CURRENT_VERSION
-from git import Repo
-repo = Repo( search_parent_directories=True )
- 
-if 'current_version' in os.environ:
-   # get the current_version env var set by buildDocs.sh
-   current_version = os.environ['current_version']
-else:
-   # the user is probably doing `make html`
-   # set this build's current version by looking at the branch
-   current_version = repo.active_branch.name
+# on lit la version courante depuis un fichier temporaire
+current_version = (open("git_branch_current.txt", "r").readline())[:-1]
  
 # tell the theme which version we're currently on ('current_version' affects
 # the lower-left rtd menu and 'version' affects the logo-area version)
 html_context['current_version'] = current_version
 html_context['version'] = current_version
- 
- 
-# POPULATE LINKS TO OTHER VERSIONS
+
+
+# liste des versions depuis un fichier temporaire
+branch_list_file = open("git_branch_list.txt")
+lines = branch_list_file.readlines()
+
 html_context['versions'] = list()
- 
-versions = [branch.name for branch in repo.branches]
-for version in versions:
-   html_context['versions'].append( (version, '/' +REPO_NAME+ '/' +version+ '/') )
- 
+
+for line in lines:
+   version = line[:-1]
+   if current_version != version:
+      html_context['versions'].append( (version, current_version + '/') )
 
 

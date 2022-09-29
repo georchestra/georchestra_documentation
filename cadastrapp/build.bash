@@ -8,15 +8,22 @@ rm -rf html/*
 echo " fait"
 echo ""
 
-
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-echo " liste des versions"
+echo " mise à jour du clone local"
 
 # on va dans le dépôt
 cd repo
 
 # on rafraîchit le dépôt
-git pull
+git pull -qf
+
+echo " fait"
+echo ""
+
+
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " création de la liste des versions à builder"
+echo ""
 
 # on crée une liste de tags / branches à builder
 liste_versions=()
@@ -30,48 +37,64 @@ done
 
 # on rajoute des branches à la main + master
 liste_versions+=("master")
-liste_versions+=("docs_mapstore2")
 
-echo " fait"
+
+for tag in "${liste_versions[@]}"; do
+  echo " $tag"
+  # on crée un fichier qui liste les tags / branches à builder
+  echo "$tag" >> docs/git_branch_list.txt
+done
+
 echo ""
-
 
 # et on itère dessus
 for item in "${liste_versions[@]}"; do
   
   echo ""
   echo ""
-  echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  echo "---------------------------------------------------------"
   echo " build de : $item"
+  echo ""
+  echo ""
 
   # on change de branche
-  git checkout $item
+  git checkout -qf $item
 
+  # on crée un petit fichier avec le nom de la version courant
+  echo "$item" > docs/git_branch_current.txt
+  
   # on copie les fichiers nécessaire
   cp -f ../conf.py docs/conf.py
+  #rm -rf docs/_templates
   mkdir docs/_templates
   cp -f ../versions.html docs/_templates/
-
+  
   # on builde la version HTML
   sphinx-build -b html docs/ ../html/$item
 
   # nettoyage
-  git checkout docs/conf.py
+  rm -f conf.py
   rm -rf docs/_templates
 
   echo ""
-  echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  echo "---------------------------------------------------------"
   echo " patch CSS"
   sed -i -e 's/max-width:800px/max-width:1200px/g' ../html/$item/_static/css/theme.css
   echo " fait"
   echo ""
-
-  #read -p "Press any key to resume ..."
   
 done
 
+
+echo ""
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " nettoyage"
+
 # return to master branch
 git checkout master
+
+rm docs/git_branch_list.txt
+rm docs/git_branch_current.txt
 
 
 echo ""
