@@ -63,9 +63,8 @@ for item in "${liste_versions[@]}"; do
   # on crée un petit fichier avec le nom de la version courant
   echo "$item" > docs/git_branch_current.txt
   
-  # on copie les fichiers nécessaire
+  # on copie les fichiers nécessaires
   cp -f ../conf.py docs/conf.py
-  #rm -rf docs/_templates
   mkdir docs/_templates
   cp -f ../versions.html docs/_templates/
   
@@ -73,7 +72,7 @@ for item in "${liste_versions[@]}"; do
   sphinx-build -b html docs/ ../html/$item
 
   # nettoyage
-  rm -f conf.py
+  git restore docs/conf.py
   rm -rf docs/_templates
 
   echo ""
