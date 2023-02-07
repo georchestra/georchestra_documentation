@@ -12,3 +12,14 @@ theme:
 
 extra_css:
     - css/extra.css
+
+# arborescence de premier niveau à gérer ici
+nav:
+    - Accueil: index.md 
+    - Guide utilisateur: 
+      - Prendre en main: prise_en_main.md
+      - Utiliser: utiliser.md
+    - Guides techniques:
+      - Administrer: administrer.md
+      - Installer: installer.md
+      - Développer: developper.md
