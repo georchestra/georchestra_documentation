@@ -17,9 +17,9 @@ extra_css:
 nav:
     - Accueil: index.md 
     - Guide utilisateur: 
-      - Prendre en main: prise_en_main.md
-      - Utiliser: utiliser.md
+      - Prendre en main: guides_utilisateur/prise_en_main.md
+      - Utiliser: guides_utilisateur/utiliser.md
     - Guides techniques:
-      - Administrer: administrer.md
-      - Installer: installer.md
-      - Développer: developper.md
+      - Administrer: guides_technique/administrer.md
+      - Installer: guides_technique/installer.md
+      - Développer: guides_technique/developper.md
