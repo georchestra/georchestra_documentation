@@ -1,6 +1,6 @@
-site_name: My Docs
+site_name: Template geOrchestra
 
-repo_url: https://github.com/MaelREBOUX/test-geor-doc
+repo_url: https://github.com/georchestra/georchestra_documentation
 repo_name: GitHub
 
 docs_dir: docs
