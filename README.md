@@ -29,6 +29,10 @@ mkdocs --version
 
 ==> `mkdocs, version 1.4.2`
 
+
+Si vous êtes dans un environnement réseau restreint / sans accès à internet, utiliser les wheels disponibles : `python -m pip install --trusted-host pypi.org modules/3.9/*.whl`.
+
+
 ## Un projet MkDocs dans le répertoire `docs`
 
 ```bash
