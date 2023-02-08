@@ -1,7 +1,7 @@
 site_name: Template pour la documentation d'un composant geOrchestra
 
 repo_url: https://github.com/georchestra/georchestra_documentation
-repo_name: GitHub
+repo_name: georchestra/georchestra_documentation
 
 docs_dir: docs
 edit_uri: edit/main/docs/
@@ -12,10 +12,21 @@ theme:
     - navigation.indexes
     - navigation.tabs
     - navigation.tabs.sticky
+    - navigation.footer
   logo: images/georchestra-logo-white.svg
   favicon: images/favicon.ico
   name: material
 
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/solid/paper-plane
+      link: mailto:psc@georchestra.org
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/georchestra
+    - icon: fontawesome/brands/github
+      link: https://github.com/georchestra
+copyright: '© 2021 - georchestra'
 
 extra_css:
     - css/extra.css
