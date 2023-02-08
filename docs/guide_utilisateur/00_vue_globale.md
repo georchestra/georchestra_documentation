@@ -1,6 +1,6 @@
 # Vue globale
 
-Vue globale de la page qui apparaît lorsque l'on ouvre le produit.
+Vue globale de la page qui apparaît lorsque l'on ouvre le composant.
 
 Exemple pour Mapstore :
 

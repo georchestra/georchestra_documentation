@@ -1,6 +1,6 @@
 # Configuration
 
-Comment configurer le produit:
+Comment configurer le composant:
 
 - explication des différentes brique de configuration (ou et quoi)
 - liste des configurations possible

@@ -6,7 +6,7 @@ Sommaire de la partie Installer
 
 
 ## [Présentation](guides_techniques/installer/00_presentation.md#presentation)
-### [Architecture produit](guides_techniques/installer/00_presentation.md#architecture-produit)
+### [Architecture composant](guides_techniques/installer/00_presentation.md#architecture-composant)
 ### [Recommandation](guides_techniques/installer/00_presentation.md#recommandation)
 ## [Prérequis](guides_techniques/installer/01_prerequis.md#prerequis)
 ### [Matériel](guides_techniques/installer/01_prerequis.md#materiel)

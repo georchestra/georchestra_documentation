@@ -1,8 +1,8 @@
 # Présentation
 
-## Architecture produit
+## Architecture composant
 
-Présentation de la hiérarchie du produit
+Présentation de la hiérarchie du composant
 
 
 

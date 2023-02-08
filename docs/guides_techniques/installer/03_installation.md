@@ -1,6 +1,6 @@
 # Installation
 
-Comment installer le produit:
+Comment installer le composant:
 
 - git clonne / télécharge les binaires
 - installer les dependances/librairie requise
