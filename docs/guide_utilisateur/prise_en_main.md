@@ -1,2 +1,2 @@
-# Prise en main
+# Prise en main rapide
 
