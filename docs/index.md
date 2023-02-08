@@ -4,7 +4,7 @@
 
 Le composant Mon composant permet de faire la fonctionnalité XXXX.
 
-
+</br>
 
 ![image info](./images/joyeux-collegues-utilisant-ordinateurs-portables.jpg)
 
