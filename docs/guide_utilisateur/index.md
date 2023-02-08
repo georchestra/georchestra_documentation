@@ -1,21 +1,22 @@
 # Index du guide utilisateur
 
-Cette partie est dédiée à la documentation de référence qui décrit toutes les fonctionnalités du produit à destination des utilisateurs:
+Cette page est dédiée au sommaire du guide utilisateur du produit, c'est-à-dire à la documentation de référence qui décrit toutes les fonctionnalités et outils du produit à destination des **utilisateurs**.
+La table des matières pour le guide est intégrée ici.
 
-- Présentation de la fenêtre principale du produit
-- Présentation des outils mis à disposition 
+**Recommandations**:
 
-Une table des matières peut être intégrée ici.
+- Après cette page, commencer par une partie "Vue globale" de l'outil qui présente la fenêtre principale du produit.
+- Ajouter un maximum de captures d'écran pour illustrer. Les images sont stockées dans le répertoire `images`.
 
-Exemple pour Mapstore:
+Exemple d'arborescence du guide pour Mapstore2 :
 
+- Vue globale du produit
 - Gérer les paramètres des couches
 - La table attributaire
 - La barre de menus
 - Imprimer une carte
 ...
 
-Les images sont stockées dans le répertoire `images`.
 
 
 
