@@ -136,3 +136,12 @@ La mise en place d'un webhook est nécessaire si on souhaite une compilation aut
 Pour tester si le webhooks fonctionne sur les évènements sélectionnés il suffit de modifier un fichier puis de pousser la modification sur github. Si `Pushes` a été sélectionné, alors, sur le site RTD, vérifier sur l'onglet `Compilations` si une compilation est en cours.
 
 
+### Convertir un fichier RST (reStructuredText) en MarkDown
+
+L'utilisation de ChatGPT permet de convertir les fichiers
+
+Exemple de prompt :
+Can you convert https://raw.githubusercontent.com/georchestra/cadastrapp/master/docs/guide_developpeur/matrice_fonctionnalites.rst to markdown ?
+
+![image info](./images/prompt_chatgpt.PNG)
+
