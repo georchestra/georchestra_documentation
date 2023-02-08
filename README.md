@@ -8,32 +8,59 @@ Modèle de documentation d'un produit geOrchestra.
 
 ## Installation et configuration de MkDocs
 
-D'abord un virtualenv Python propre à Mkdocs :
+### Création et activation d'un environnement virtuel Python
+
+Il faut mettre en place un virtualenv Python propre à Mkdocs.
+
+#### Sous Linux
 
 ```bash
 python -m venv venv_mkdocs
 source venv_mkdocs/bin/activate
 ```
 
-Faire `source venv_mkdocs/Scripts/activate` sous Windows, depuis un terminal
+#### Sous Windows
 
-
-Puis installation de MkDocs :
+Utiliser un terminal bash, type git-bash.
 
 ```bash
-pip install --upgrade pip
-pip install mkdocs
-pip install mkdocs-material
-pip install mkdocs-toc-md 
-pip install html5lib
-
-mkdocs --version
+python -m venv venv_mkdocs
+source venv_mkdocs/Scripts/activate
 ```
 
-==> `mkdocs, version 1.4.2`
+### Installer les modules Python requis 
 
+MkDocs est un module python. Notre template de documentation fait également appel à des modules complémentaires.
+
+Il y a 3 possibilité pour installer ces modules.
+
+#### utiliser les requirements
+
+C'est la meilleure méthode car elle permet de s'assurer que l'on travaille tous sur les mêmes versions.
+
+```bash
+pip install -r requirements
+```
+
+Pour vérifier :
+
+`mkdocs --version` ==> `mkdocs, version 1.4.2`
+
+
+#### fresh install
+
+Installation des dernières versions disponibles :
+
+```bash
+pip install mkdocs
+pip install mkdocs-toc-md
+pip install mkdocs-material
+```
+
+#### Utiliser les wheels
 
 Si vous êtes dans un environnement réseau restreint / sans accès à internet, utiliser les wheels disponibles : `python -m pip install --trusted-host pypi.org modules/3.9/*.whl`.
+
 
 
 ## Un projet MkDocs dans le répertoire `docs`
@@ -82,10 +109,6 @@ python:
    - requirements: requirements.txt
 ```
 
-## tableofcontent
-
-Le plugin mkdocs-toc-md vas créer (dans docs/tableofcontent.md) une table des matières dynamiquement afin de pouvoir faire uniquement des "copié-collé dans les differents index.md
-
 
 ## Configuration d'un projet ReadTheDocs
 
@@ -94,10 +117,8 @@ Le plugin mkdocs-toc-md vas créer (dans docs/tableofcontent.md) une table des m
 * Aller sur la page [https://readthedocs.org/dashboard/](https://readthedocs.org/dashboard/).
 * Cliquer sur `Importer un projet`.
 * Cliquer sur le bouton `Importer manuellement`.
-* Mettre un nom / code du produit en cohérence avec les règles de nommages des projets de documentation de geOrchestra :
-  * tous les noms doivent commencer par `georchestra` puis le nom du produit, séparés par un tiret. Exemple : `georchestra-cadastrapp`
-  * s'il s'agit d'un plugin d'un produit, nommer selon cet exemple : `georchestra-mapstore2-urbanisme`
-* Coller l'url du dépôt hébergé sur github (ou autre dépôt en ligne).
+* Mettre un nom en cohérence avec les règles de nommages des projets de documentation de geOrchestra
+* Coller l'url du dépôt hébergé sur github.
 * **IMPORTANT** spécifier manuellement le nom de la branche par défaut du projet : `master` pour les 'vieux' projets, `main` pour les récents.
 * Cocher la case `Modifier les options avancées du projet`.
 * Type de documentation : `Mkdocs`.
@@ -138,13 +159,4 @@ La mise en place d'un webhook est nécessaire si on souhaite une compilation aut
 
 Pour tester si le webhooks fonctionne sur les évènements sélectionnés il suffit de modifier un fichier puis de pousser la modification sur github. Si `Pushes` a été sélectionné, alors, sur le site RTD, vérifier sur l'onglet `Compilations` si une compilation est en cours.
 
-
-### Convertir un fichier RST (reStructuredText) en MarkDown
-
-L'utilisation de ChatGPT permet de convertir les fichiers
-
-Exemple de prompt :
-Can you convert https://raw.githubusercontent.com/georchestra/cadastrapp/master/docs/guide_developpeur/matrice_fonctionnalites.rst to markdown ?
-
-![image info](./images/prompt_chatgpt.PNG)
 
