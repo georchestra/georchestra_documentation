@@ -24,6 +24,7 @@ Puis installation de MkDocs :
 pip install --upgrade pip
 pip install mkdocs
 pip install mkdocs-material
+pip install mkdocs-toc-md 
 
 mkdocs --version
 ```
@@ -79,6 +80,10 @@ python:
    install:
    - requirements: requirements.txt
 ```
+
+## tableofcontent
+
+Le plugin mkdocs-toc-md vas créer (dans docs/tableofcontent.md) une table des matières dynamiquement afin de pouvoir faire uniquement des "copié-collé dans les differents index.md
 
 
 ## Configuration d'un projet ReadTheDocs

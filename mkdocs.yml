@@ -43,5 +43,17 @@ nav:
             - guides_techniques/developper/index.md
             - guides_techniques/developper/matrice_fonctionnalites.md
             - guides_techniques/developper/api.md
+plugins:
+    - toc-md:
+        toc_page_title: Contents
+        toc_page_description: Summary of the section
+        header_level: 3
+        pickup_description_meta: false
+        pickup_description_class: false
+        output_path: tableofcontent.md
+        output_log: true
+        ignore_page_pattern: index.md
+        remove_navigation_page_pattern: index.md
+        template_dir_path: custom_template
 
 # TODO Documenter comment simplifier l'arborescence pour un petit projet
