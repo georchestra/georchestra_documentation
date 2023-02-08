@@ -2,6 +2,7 @@
 
 ## C'est quoi ?
 
+Le composant Mon composant permet de faire la fonctionnalité XXXX.
 
 
 
