@@ -8,8 +8,8 @@ edit_uri: edit/main/docs/
 
 theme:
   # name: 'mkdocs'
-  name: 'readthedocs'
-  # name: material
+  # name: 'readthedocs'
+  name: material
 
 extra_css:
     - css/extra.css
@@ -35,4 +35,4 @@ nav:
             - guides_techniques/developper/index.md
             - guides_techniques/developper/une_page.md
 
-# Documenter comment simplifier l'arborescence pour un petit projet
+# TODO Documenter comment simplifier l'arborescence pour un petit projet
