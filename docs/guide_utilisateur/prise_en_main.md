@@ -1,4 +1,4 @@
-# Prise en main rapide
+# Prendre en main rapidement
 
 Documentation assez courte sur la manière de s'y retrouver très rapidement dans le composant (en quelques clics), en focalisant sur les fonctionnalités essentielles, pour ne pas perdre des utilisateurs débutants ou peu à l'aise avec ce type d'outil.
 
