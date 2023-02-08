@@ -1,9 +1,5 @@
 # Index du guide utilisateur
 
-## Sommaire
-
-# Utiliser
-
 Cette partie est dédiée à la documentation de référence qui décrit toutes les fonctionnalités du produit à destination des utilisateurs:
 
 - Présentation de la fenêtre principale du produit
@@ -18,6 +14,8 @@ Exemple pour Mapstore:
 - La barre de menus
 - Imprimer une carte
 ...
+
+Les images sont stockées dans le répertoire `images`.
 
 
 
