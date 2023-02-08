@@ -28,8 +28,11 @@ nav:
         - Administrer:
             - guides_techniques/administrer/index.md
             - guides_techniques/administrer/une_page.md
-        - Installer: guides_techniques/installer.md
+        - Installer:
             - guides_techniques/installer/index.md
             - guides_techniques/installer/une_page.md
-        - Développer: guides_techniques/developper.md
+        - Développer:
+            - guides_techniques/developper/index.md
+            - guides_techniques/developper/une_page.md
 
+# Documenter comment simplifier l'arborescence pour un petit projet
