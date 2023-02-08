@@ -30,7 +30,13 @@ nav:
             - guides_techniques/administrer/une_page.md
         - Installer:
             - guides_techniques/installer/index.md
-            - guides_techniques/installer/une_page.md
+            - guides_techniques/installer/00_presentation.md
+            - guides_techniques/installer/01_prerequis.md
+            - guides_techniques/installer/02_preparation.md
+            - guides_techniques/installer/03_installation.md
+            - guides_techniques/installer/04_configuration.md
+            - guides_techniques/installer/05_debug.md
+            - guides_techniques/installer/06_tests.md
         - Développer:
             - guides_techniques/developper/index.md
             - guides_techniques/developper/une_page.md
