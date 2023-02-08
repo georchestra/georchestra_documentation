@@ -25,6 +25,7 @@ pip install --upgrade pip
 pip install mkdocs
 pip install mkdocs-material
 pip install mkdocs-toc-md 
+pip install html5lib
 
 mkdocs --version
 ```
