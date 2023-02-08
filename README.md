@@ -56,6 +56,7 @@ pip install mkdocs
 pip install mkdocs-toc-md
 pip install html5lib
 pip install mkdocs-material
+pip install mkdocs-git-revision-date-localized-plugin
 ```
 
 #### Utiliser les wheels
