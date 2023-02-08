@@ -14,16 +14,18 @@ theme:
 extra_css:
     - css/extra.css
 
-# arborescence de premier niveau à gérer ici
-# nav:
-    # - Accueil: index.md 
-    # - Guide utilisateur: 
-      # - Prendre en main: guide_utilisateur/prise_en_main.md
-      # - Utiliser: guide_utilisateur/utiliser.md
-    # - Guides techniques:
-      # - Administrer: guides_techniques/administrer.md
-      # - Installer: guides_techniques/installer.md
-      # - Développer: guides_techniques/developper.md
-# nav:
-    # - Un répertoire:
-        # - un_repertoire/index.md
+# arborescence de 1er et 2e niveau à gérer ici
+# Ces entrées correspondent au modèle de documentation
+
+nav:
+    - Accueil: index.md 
+    - Guide utilisateur:
+        - Sommaire: guide_utilisateur/index.md
+        - Prendre en main: guide_utilisateur/prise_en_main.md
+        - Utiliser: guide_utilisateur/utiliser.md
+    - Guides techniques:
+        - Sommaire: guides_techniques/index.md
+        - Administrer: guides_techniques/administrer.md
+        - Installer: guides_techniques/installer.md
+        - Développer: guides_techniques/developper.md
+
