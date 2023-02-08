@@ -9,8 +9,8 @@ edit_uri: edit/main/docs/
 theme:
   features:
     - toc.integrate
-  # name: 'mkdocs'
-  # name: 'readthedocs'
+  logo: images/georchestra-logo-white.svg
+  favicon: images/favicon.ico
   name: material
 
 extra_css:
