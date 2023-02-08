@@ -1,4 +1,4 @@
-# Acceuil
+# Accueil
 
 ## C'est quoi ?
 
