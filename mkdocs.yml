@@ -39,6 +39,7 @@ nav:
             - guides_techniques/installer/06_tests.md
         - Développer:
             - guides_techniques/developper/index.md
-            - guides_techniques/developper/une_page.md
+            - guides_techniques/developper/matrice_fonctionnalites.md
+            - guides_techniques/developper/api.md
 
 # TODO Documenter comment simplifier l'arborescence pour un petit projet
