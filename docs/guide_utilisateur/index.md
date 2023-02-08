@@ -2,6 +2,6 @@
 
 ## Sommaire
 
-sommaire
+Description rapide du guide utilisateur et table des matières.
 
 
