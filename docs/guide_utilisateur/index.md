@@ -12,6 +12,7 @@ Cette partie est dédiée à la documentation de référence qui décrit toutes 
 Une table des matières peut être intégrée ici.
 
 Exemple pour Mapstore:
+
 - Gérer les paramètres des couches
 - La table attributaire
 - La barre de menus
