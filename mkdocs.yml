@@ -7,19 +7,23 @@ docs_dir: docs
 edit_uri: edit/main/docs/
 
 theme:
-  #name: 'mkdocs'
+  # name: 'mkdocs'
   name: 'readthedocs'
+  # name: material
 
 extra_css:
     - css/extra.css
 
 # arborescence de premier niveau à gérer ici
-nav:
-    - Accueil: index.md 
-    - Guide utilisateur: 
-      - Prendre en main: guide_utilisateur/prise_en_main.md
-      - Utiliser: guide_utilisateur/utiliser.md
-    - Guides techniques:
-      - Administrer: guides_techniques/administrer.md
-      - Installer: guides_techniques/installer.md
-      - Développer: guides_techniques/developper.md
+# nav:
+    # - Accueil: index.md 
+    # - Guide utilisateur: 
+      # - Prendre en main: guide_utilisateur/prise_en_main.md
+      # - Utiliser: guide_utilisateur/utiliser.md
+    # - Guides techniques:
+      # - Administrer: guides_techniques/administrer.md
+      # - Installer: guides_techniques/installer.md
+      # - Développer: guides_techniques/developper.md
+# nav:
+    # - Un répertoire:
+        # - un_repertoire/index.md
