@@ -11,3 +11,9 @@
  --md-accent-bg-color:#fff;
  --md-accent-bg-color--light:#ffffffb3
 }
+
+h1, h2, h3 {
+  color:rgb(133, 18, 126)!important;
+  font-weight:600!important;
+}
+
