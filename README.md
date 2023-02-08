@@ -54,6 +54,7 @@ Installation des dernières versions disponibles :
 ```bash
 pip install mkdocs
 pip install mkdocs-toc-md
+pip install html5lib
 pip install mkdocs-material
 ```
 
@@ -82,7 +83,11 @@ pip freeze > requirements.txt
 Ils seront repris par le compilateur de Read The Docs.
 
 
-## Ajout d'un fichier configuration `.readthedocs.yaml`
+
+## Configuration d'un projet ReadTheDocs
+
+
+### Ajout d'un fichier configuration `.readthedocs.yaml`
 
 Dans le répertoire `docs` créer un fichier `.readthedocs.yaml`. Les réglages qui seront mis dans ce fichier seront pris en compte pour la compilation sur Read The Docs (RTD).
 
@@ -109,8 +114,6 @@ python:
    - requirements: requirements.txt
 ```
 
-
-## Configuration d'un projet ReadTheDocs
 
 ### Création d'un nouveau projet RTD
 
