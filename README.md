@@ -23,6 +23,7 @@ Puis installation de MkDocs :
 ```bash
 pip install --upgrade pip
 pip install mkdocs
+pip install mkdocs-material
 
 mkdocs --version
 ```
