@@ -9,9 +9,11 @@ edit_uri: edit/main/docs/
 theme:
   features:
     - toc.integrate
+    - navigation.indexes
   logo: images/georchestra-logo-white.svg
   favicon: images/favicon.ico
   name: material
+
 
 extra_css:
     - css/extra.css
