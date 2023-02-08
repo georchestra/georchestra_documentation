@@ -10,6 +10,8 @@ theme:
   features:
     - toc.integrate
     - navigation.indexes
+    - navigation.tabs
+    - navigation.tabs.sticky
   logo: images/georchestra-logo-white.svg
   favicon: images/favicon.ico
   name: material
@@ -46,6 +48,7 @@ nav:
             - guides_techniques/developper/matrice_fonctionnalites.md
             - guides_techniques/developper/api.md
 plugins:
+    - search
     - toc-md:
         toc_page_title: Contents
         toc_page_description: Summary of the section
