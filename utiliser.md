@@ -11,6 +11,7 @@ Copier les éléments suivants à la racine de votre projet :
 - le répertoire `docs`
 - le fichier de configuration de la documentation `mkdocs.yml`
 - le fichier de configuration de compilation de documentation pour ReadTheDocs `.readthedocs.yaml`
+- le fichier `requirements.txt` pour l'installation de MkDocs
 
 ## Modifier la configuration
 
@@ -22,7 +23,7 @@ Ouvrir le fichier `mkdocs.yml` et modifier :
 
 ### Créer une session virtuelle Python et installer
 
-Voir la partie xxxx du README
+Voir la partie [Installation et configuration de MkDocs](https://github.com/georchestra/georchestra_documentation#installation-et-configuration-de-mkdocs) du [README](https://github.com/georchestra/georchestra_documentation#readme).
 
 
 ### Prévisualiser
