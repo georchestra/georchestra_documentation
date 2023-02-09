@@ -46,10 +46,8 @@ nav:
     - Guide utilisateur:
         - Sommaire: guide_utilisateur/index.md
         - Prendre en main: guide_utilisateur/00_prise_en_main.md
-        - Utiliser: 
-            - guide_utilisateur/01_vue_globale.md
-            - guide_utilisateur/02_outils_1.md
-            - guide_utilisateur/03_outils_2.md
+        - Vue globale: guide_utilisateur/01_vue_globale.md
+        - Barres ou menus d''outils: guide_utilisateur/02_outils.md
     - Guides techniques:
         - Sommaire: guides_techniques/index.md
         - Administrer:
