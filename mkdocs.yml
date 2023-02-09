@@ -33,7 +33,7 @@ extra:
       link: https://groups.google.com/group/georchestra-dev?hl=fr
     - icon: fontawesome/regular/comments
       link: https://kiwiirc.com/client/irc.libera.chat/georchestra
-copyright: '© 2021 - georchestra'
+copyright: '© 2023 - georchestra'
 
 extra_css:
     - css/extra.css
