@@ -2,7 +2,20 @@
 
 ## Cloner ou télécharger ce dépôt de code
 
-TODO
+### En ligne de commande
+
+```bash
+git clone https://github.com/georchestra/georchestra_documentation.git
+```
+
+### Avec GitHub Desktop
+
+- file > Clone repository
+- onglet `URL`
+- coller `https://github.com/georchestra/georchestra_documentation/`
+- choisir un répertoire local particulier (avec la possibilité de mettre un nom particulier), sinon laisser par défaut
+- cliquer sur le bouton "Clone"
+
 
 ## Importer dans votre projet
 
@@ -34,5 +47,5 @@ Voir la partie [Installation et configuration de MkDocs](https://github.com/geor
 
 ### Prévisualiser
 
-Dans le terminal faire un  `mkdocs serve` et ouvrir un navigateur sur [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
+Dans le terminal faire un  `mkdocs serve` et ouvrir un navigateur sur [http://localhost:8000/](http://localhost:8000/).
 
