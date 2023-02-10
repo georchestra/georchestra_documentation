@@ -13,6 +13,12 @@ Copier les éléments suivants à la racine de votre projet :
 - le fichier de configuration de compilation de documentation pour ReadTheDocs `.readthedocs.yaml`
 - le fichier `requirements.txt` pour l'installation de MkDocs
 
+
+## Modifier le .gitignore de votre projet
+
+Modifier le fichier `.gitignore` pour rajouter une exclusion pour ne pas comitter le fichier `docs/tableofcontent.md` qui est un fichier généré à chaque build de la documentation.
+
+
 ## Modifier la configuration
 
 Ouvrir le fichier `mkdocs.yml` et modifier :
