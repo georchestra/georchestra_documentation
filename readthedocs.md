@@ -1,11 +1,11 @@
-## Configuration d'un projet ReadTheDocs
+# Configuration d'un projet ReadTheDocs
 
-### Python requirements
+## Python requirements
 
 Ils seront repris par le compilateur de Read The Docs, donc les maintenir à jour !
 
 
-### Ajout d'un fichier configuration `.readthedocs.yaml`
+## Ajout d'un fichier configuration `.readthedocs.yaml`
 
 Dans le répertoire `docs` créer un fichier `.readthedocs.yaml`. Les réglages qui seront mis dans ce fichier seront pris en compte pour la compilation sur Read The Docs (RTD).
 
@@ -35,7 +35,7 @@ python:
 
 
 
-### Création d'un nouveau projet RTD
+## Création d'un nouveau projet RTD
 
 * Aller sur la page [https://readthedocs.org/dashboard/](https://readthedocs.org/dashboard/).
 * Cliquer sur `Importer un projet`.
@@ -54,12 +54,12 @@ python:
 Si elle passe : on peut lancer une compilation de la doc manuellement.
 
 
-### Compilation d'une release
+## Compilation d'une release
 
 TODO
 
 
-### Configuration du webhook
+## Configuration du webhook
 
 La mise en place d'un webhook est nécessaire si on souhaite une compilation automatique à chaque commit sur une branche spécifique.
 
@@ -83,3 +83,4 @@ La mise en place d'un webhook est nécessaire si on souhaite une compilation aut
 * Pour finir, tout en bas, appuyer sur le bouton `Add webhook`
 
 Pour tester si le webhooks fonctionne sur les évènements sélectionnés il suffit de modifier un fichier puis de pousser la modification sur github. Si `Pushes` a été sélectionné, alors, sur le site RTD, vérifier sur l'onglet `Compilations` si une compilation est en cours.
+
