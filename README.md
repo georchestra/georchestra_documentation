@@ -1,11 +1,8 @@
 # geOrchestra documentation
 
-Template for the geOrchestra's documentations.
-
-Modèle de documentation d'un produit geOrchestra.
-
-
 ## Français
+
+Ce dépôt contient le **modèle de documentation d'un produit geOrchestra** et sa documentation.
 
 [Comment utiliser ce modèle pour votre projet ?](utiliser.md)
 
@@ -18,7 +15,9 @@ Modèle de documentation d'un produit geOrchestra.
 
 ## English
 
-Not yet available
+This repository contains the **documentation template of a geOrchestra product** and its documentation.
+
+English langage instructions are not yet yet available. 
 
 
 
