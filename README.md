@@ -65,7 +65,7 @@ pip install mkdocs-git-revision-date-localized-plugin
 
 #### Utiliser les wheels
 
-Si vous êtes dans un environnement réseau restreint / sans accès à internet, utiliser les wheels disponibles : `python -m pip install --trusted-host pypi.org modules/3.9/*.whl`.
+Si vous êtes dans un environnement réseau restreint / sans accès à internet et sous Windows (désolé…), utilisez les wheels disponibles : `python -m pip install --trusted-host pypi.org modules/3.9_windows/*.whl`.
 
 
 ### Maintien de ce modèle
