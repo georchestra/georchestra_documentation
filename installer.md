@@ -1,5 +1,11 @@
 # Installation et configuration de MkDocs
 
+## Prérequis
+
+- Python 3.9 (de préférence) ou 3.10.
+- un terminal bash : terminal d'un système Linux ou git bash sous Windows
+
+
 ## Création et activation d'un environnement virtuel Python
 
 Il faut mettre en place un virtualenv Python propre à Mkdocs.
@@ -44,11 +50,7 @@ Pour vérifier :
 Installation des dernières versions disponibles :
 
 ```bash
-pip install mkdocs
-pip install mkdocs-toc-md
-pip install html5lib
-pip install mkdocs-material
-pip install mkdocs-git-revision-date-localized-plugin
+pip install mkdocs mkdocs-toc-md html5lib mkdocs-material mkdocs-git-revision-date-localized-plugin
 ```
 
 ### Utiliser les wheels
