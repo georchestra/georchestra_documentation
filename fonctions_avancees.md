@@ -24,6 +24,7 @@ hide:
 ---
 ```
 
+[voir la doc officielle](https://squidfunk.github.io/mkdocs-material/setup/setting-up-navigation/#hiding-the-sidebars).
 
 
 ### Convertir un fichier RST (reStructuredText) en MarkDown
