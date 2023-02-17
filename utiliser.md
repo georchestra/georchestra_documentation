@@ -52,19 +52,3 @@ Dans le terminal faire un  `mkdocs serve` et ouvrir un navigateur sur [http://lo
 
 
 
-
-##  Notes diverses
-
-### tableofcontent
-
-Le plugin **mkdocs-toc-md** vas créer (dans docs/tableofcontent.md) une table des matières dynamiquement afin de pouvoir faire uniquement des "copié-collé dans les differents `index.md.
-
-
-### Convertir un fichier RST (reStructuredText) en MarkDown
-
-L'utilisation de ChatGPT permet de convertir les fichiers
-
-Exemple de prompt :
-Can you convert https://raw.githubusercontent.com/georchestra/cadastrapp/master/docs/guide_developpeur/matrice_fonctionnalites.rst to markdown ?
-
-![image info](./images/prompt_chatgpt.PNG)

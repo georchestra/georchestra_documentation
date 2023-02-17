@@ -8,6 +8,8 @@ Ce dépôt contient le **modèle de documentation d'un produit geOrchestra** et 
 
 [Installation et configuration de MkDocs.](installer.md)
 
+[Utiliser et configurer les fonctionnalités avancées](fonctions_avancees.md)
+
 [Maintenir à jour ce modèle.](maintenir.md)
 
 [Configuration d'un projet ReadTheDocs pour compiler et publier la documentation.](readthedocs.md)
