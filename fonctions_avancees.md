@@ -10,6 +10,21 @@ On peut ensuite l'utiliser en copiant-collant son contenu pour le coller dans le
 
 
 
+## Masquer la navigation
+
+On veut masquer la partie navigation qui est à gauche sur chaque page, sur la page d'accueil principale.
+
+On insère donc cette balise en haut du markdown :
+
+```
+---
+hide:
+  - navigation
+  - toc
+---
+```
+
+
 
 ### Convertir un fichier RST (reStructuredText) en MarkDown
 
