@@ -10387,3 +10387,9 @@ a.nav-link {
 #cardPresentation img {
     display: none;
 }
+
+.go-doc-bloc:hover {
+    border: 1px solid rgba(80, 11, 76, 1);
+    background-color: rgba(80, 11, 76, 0.3);
+    cursor: pointer;
+}
