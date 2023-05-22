@@ -48,6 +48,7 @@ nav:
         - Prendre en main: guide_utilisateur/00_prise_en_main.md
         - Vue globale: guide_utilisateur/01_vue_globale.md
         - Barres ou menus d''outils: guide_utilisateur/02_outils.md
+        - Aide syntaxe: guide_utilisateur/aide_syntaxe.md
     - Guides techniques:
         - Sommaire: guides_techniques/index.md
         - Administrer:
@@ -66,8 +67,15 @@ nav:
             - guides_techniques/developper/index.md
             - guides_techniques/developper/matrice_fonctionnalites.md
             - guides_techniques/developper/api.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+
 plugins:
     - search
+    - callouts
     - toc-md:
         toc_page_title: Contents
         toc_page_description: Summary of the section
