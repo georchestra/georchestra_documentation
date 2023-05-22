@@ -4,5 +4,5 @@ Vue globale de la page qui apparaît lorsque l'on ouvre le produit, avec encards
 
 Exemple de vue globale Mapstore2 :
 
-![](/images/00_vue_globale.PNG)
+![](images/00_vue_globale.png)
 
