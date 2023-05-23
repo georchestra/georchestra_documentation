@@ -50,7 +50,7 @@ Pour vérifier :
 Installation des dernières versions disponibles :
 
 ```bash
-pip install mkdocs mkdocs-toc-md html5lib mkdocs-material mkdocs-git-revision-date-localized-plugin
+pip install mkdocs mkdocs-toc-md html5lib mkdocs-material mkdocs-callouts mkdocs-git-revision-date-localized-plugin
 ```
 
 ### Utiliser les wheels
