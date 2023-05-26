@@ -2,6 +2,10 @@
 
 Cette page n'est là que pour aider les rédacteur à prendre en main la syntaxe markdown elle-même enrichie par mkdocs et ses plugins.
 
+Se reporter à [ce site](https://www.markdownguide.org/basic-syntax/) pour des exemples plus fournis de syntaxe en Markdown.
+
+
+
 ## Titres et hiérarchisation
 
 
