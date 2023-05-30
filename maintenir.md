@@ -21,7 +21,7 @@ Ouvrir un terminal à la racine de votre clone local du dépôt `georchestra_doc
 - copier le répertoire `docs_modules` depuis votre clone local du dépôt `georchestra_documentation` dans le répertoire de votre projet
 - lancer une session Python : `source venv_mkdocs/Scripts/activate`
 - on met à jour les libraires python : 
-  - en utilisant les wheels : `python -m pip install --trusted-host pypi.org modules/3.9_windows/*.whl`
+  - en utilisant les wheels : `python -m pip install --trusted-host pypi.org docs_modules/3.9_windows/*.whl`
   - ou en utilisant le fichier `requirements.txt` : `pip install -r requirements.txt`
 - si tout est ok, on vérifie la version de MkDocs : `mkdocs –-version`
 
