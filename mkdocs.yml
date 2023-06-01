@@ -19,6 +19,9 @@ theme:
   name: material
 
 extra:
+  version: 
+    provider: mike
+
   generator: false
   social:
     - icon: fontawesome/solid/paper-plane
