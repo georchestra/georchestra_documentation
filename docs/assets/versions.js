@@ -17,8 +17,8 @@ setTimeout(function() {
   document.getElementsByTagName('head')[0].appendChild(CSSLink);
 
   var script = document.createElement('script');
-  script.src = 'https://argo-cd.readthedocs.io/_/api/v2/footer_html/?'+
-      'callback=' + callbackName + '&project=argo-cd&page=&theme=mkdocs&format=jsonp&docroot=docs&source_suffix=.md&version=' + (window['READTHEDOCS_DATA'] || { version: 'latest' }).version;
+  script.src = 'https://georchestratdocumentation-test.readthedocs.io/_/api/v2/footer_html/?'+
+      'callback=' + callbackName + '&project=georchestratdocumentation-test&page=&theme=mkdocs&format=jsonp&docroot=docs&source_suffix=.md&version=' + (window['READTHEDOCS_DATA'] || { version: 'latest' }).version;
   document.getElementsByTagName('head')[0].appendChild(script);
 }, 0);
 
@@ -28,7 +28,7 @@ window.addEventListener("DOMContentLoaded", function() {
   var margin = 30;
   var headerHeight = document.getElementsByClassName("md-header")[0].offsetHeight; 
   if (rtdData.version === "latest") {
-    document.querySelector("div[data-md-component=announce]").innerHTML = "<div id='announce-msg'>You are viewing the docs for an unreleased version of Argo CD, <a href='https://argo-cd.readthedocs.io/en/stable/'>click here to go to the latest stable version.</a></div>"
+    document.querySelector("div[data-md-component=announce]").innerHTML = "<div id='announce-msg'>You are viewing the docs for an unreleased version of Georchestra, <a href='https://georchestratdocumentation-test.readthedocs.io/en/stable/'>click here to go to the latest stable version.</a></div>"
     var bannerHeight = document.getElementById('announce-msg').offsetHeight + margin
     document.querySelector("header.md-header").style.top = bannerHeight +"px";   
     document.querySelector('style').textContent +=
@@ -37,7 +37,7 @@ window.addEventListener("DOMContentLoaded", function() {
     "@media screen and (min-width: 60em){ .md-sidebar--secondary { height: 0;  top:"+ (bannerHeight+headerHeight)+"px !important; }}"
   }
   else if (rtdData.version !== "stable") {
-    document.querySelector("div[data-md-component=announce]").innerHTML = "<div id='announce-msg'>You are viewing the docs for a previous version of Argo CD, <a href='https://argo-cd.readthedocs.io/en/stable/'>click here to go to the latest stable version.</a></div>"
+    document.querySelector("div[data-md-component=announce]").innerHTML = "<div id='announce-msg'>You are viewing the docs for a previous version of Georchestra, <a href='https://georchestratdocumentation-test.readthedocs.io/en/stable/'>click here to go to the latest stable version.</a></div>"
     var bannerHeight = document.getElementById('announce-msg').offsetHeight + margin
     document.querySelector("header.md-header").style.top = bannerHeight +"px";   
     document.querySelector('style').textContent +=
