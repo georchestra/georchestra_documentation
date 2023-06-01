@@ -38,12 +38,12 @@ extra:
       link: https://kiwiirc.com/client/irc.libera.chat/georchestra
 copyright: '© 2023 - geOrchestra'
 
-extra_css:
+extra_css: 
     - css/extra.css
     - assets/versions.css
 
 extra_javascript:
-- assets/versions.js
+    - assets/versions.js
 
 # arborescence de 1er et 2e niveau à gérer ici
 # Ces entrées correspondent au modèle de documentation
