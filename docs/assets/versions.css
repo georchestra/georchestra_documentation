@@ -59,7 +59,7 @@ most styles have to be overriden here */
   bottom: 0;
   left: 0;
   width: 100px !important;
-  background: hsla(173, 100%, 24%, 1) !important;
+  background: hsla(304,76%,30%,1) !important;
   font-family: inherit !important;
   z-index: 0 !important;
 }
@@ -72,7 +72,7 @@ most styles have to be overriden here */
 }
 .rst-versions .rst-current-version{
   padding:12px;
-  background: hsla(173, 100%, 24%, 1) !important;
+  background: hsla(304,76%,30%,1) !important;
   display:block;
   text-align:right;
   font-size:90%;
