@@ -36,4 +36,22 @@ Can you convert https://raw.githubusercontent.com/georchestra/cadastrapp/master/
 
 ![image info](./images/prompt_chatgpt.PNG)
 
-# créer une nouvelle version
+# Créer une nouvelle version
+
+Éditer le fichier [docs/versions.json](docs/versions.json)
+```
+[
+  {"version": "latest", "title": "latest", "aliases": ["latest"]},
+  {"version": "version_test", "title": "version_test", "aliases": []}
+]
+```
+Deviendra:
+```
+[
+  {"version": "latest", "title": "latest", "aliases": ["latest"]},
+  {"version": "nouvelle", "title": "nouvelleversion", "aliases": []},
+  {"version": "version_test", "title": "version_test", "aliases": []}
+]
+```
+
+Il faudra également activer la nouvelle version via l'interface de configuration readthedocs.
