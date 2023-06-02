@@ -19,7 +19,7 @@ theme:
   name: material
 
 extra:
-  version: 
+  version:
     provider: mike
 
   generator: false
@@ -42,8 +42,8 @@ extra_css:
     - css/extra.css
 #    - assets/versions.css
 
-#extra_javascript:
-#    - assets/versions2.0.js
+extra_javascript:
+    - assets/custom_versions.js
 
 # arborescence de 1er et 2e niveau à gérer ici
 # Ces entrées correspondent au modèle de documentation
