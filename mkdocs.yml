@@ -19,6 +19,9 @@ theme:
   name: material
 
 extra:
+  version:
+    provider: mike
+
   generator: false
   social:
     - icon: fontawesome/solid/paper-plane
@@ -37,6 +40,9 @@ copyright: '© 2023 - geOrchestra'
 
 extra_css:
     - css/extra.css
+
+extra_javascript:
+    - assets/custom_versions.js
 
 # arborescence de 1er et 2e niveau à gérer ici
 # Ces entrées correspondent au modèle de documentation

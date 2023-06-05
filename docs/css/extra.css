@@ -1,4 +1,6 @@
-
+.rst-versions.rst-badge {
+    display: none !important;
+}
 
 :root {
  --md-primary-fg-color:#85127e;

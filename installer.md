@@ -56,3 +56,19 @@ pip install mkdocs mkdocs-toc-md html5lib mkdocs-material mkdocs-callouts mkdocs
 ### Utiliser les wheels
 
 Si vous êtes dans un environnement réseau restreint / sans accès à internet et sous Windows (désolé…), utilisez les wheels disponibles : `python -m pip install --trusted-host pypi.org modules/3.9_windows/*.whl`.
+
+### Configurer les versions
+
+Vous pouvez modifier le fichier [docs/versions.json](docs/versions.json) en fonction des différentes versions de votre application.
+
+Il faut également éditer la première ligne du fichier [docs/assets/custon_version.js](docs/assets/custom_versions.js) comme çi-dessous : 
+```
+var url_project = "georchestratdocumentation-test.readthedocs.io"
+```
+Deviendra:
+```
+var url_project = "votreurldocumentation.readthedocs.io"
+```
+
+
+```
