@@ -75,7 +75,7 @@ La mise en place d'un webhook est nécessaire si on souhaite une compilation aut
 * Cliquer sur le bouton `Add webhook`
 * Coller l'URL dans `Payload URL`
 * Content type : `application/json`
-* Secret : laisser vide
+* Secret : copier-coller le code
 * Cocher l'option `Let me select individual events.` Et choisir :
   * Pull requests
   * Pushes
