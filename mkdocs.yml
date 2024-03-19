@@ -1,0 +1,61 @@
+site_name: Template pour la documentation d'un composant geOrchestra
+
+repo_url: https://github.com/georchestra/georchestra_documentation
+repo_name: georchestra-documentation
+
+docs_dir: docs
+edit_uri: edit/main/docs/
+
+theme:
+  logo: images/georchestra-logo-white.svg
+  favicon: images/favicon.ico
+  name: material
+  
+  features:
+    #- toc.integrate
+    - navigation.indexes
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.footer
+  
+  
+plugins:
+  - search
+  - i18n:
+      languages:
+        fr: "Français"
+        en: "English"
+      default_language: 'fr'
+      
+      no_translation:
+        fr: "Cette page n'est pas traduite en français."
+        en: "This page isn't translated to English."
+
+      translate_nav:
+        en:
+          Accueil: "Home"
+          Guide utilisateur: "User guide"
+          Prendre en main: "Getting started"
+
+
+nav:
+    - Accueil: index.md 
+    - Guide utilisateur:
+        - Sommaire: guide_utilisateur/index.md
+        - Prendre en main: guide_utilisateur/index.md
+
+
+extra:
+  # Default mkdocs-material alternate links for untranslated pages
+  # https://squidfunk.github.io/mkdocs-material/setup/changing-the-language/#site-language-selector
+  # For translated pages the language name is replaced by the string configured in i18n plugin
+  # secction and link is replaced by the link to the translated page
+  alternate:
+    - name: "Français (Accueil)"
+      link: ""
+      lang: fr
+
+    - name: "English (Home)"
+      link: index.en
+      lang: en
+
