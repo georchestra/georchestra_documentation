@@ -1,8 +1,8 @@
 site_name: Template pour la documentation d'un composant geOrchestra
 
-INHERIT: ./mkdocs_generic.yml
+INHERIT: ../mkdocs_generic.yml
 
-docs_dir: ../docs/fr
+docs_dir: ../../docs/fr
 edit_uri: edit/main/docs/
 
 theme:
