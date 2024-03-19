@@ -1,28 +1,6 @@
 # Utiliser et configurer les fonctionnalités avancées
 
 
-
-## Générer un index des pages pour copier-coller
-
-Le plugin optionnel **mkdocs-toc-md** permet de créer un ficher `tableofcontent.md` à la racine du répertoire `docs`. Celui-ci contient une table des matières avec les liens vers les différentes pages de votre documentation.
-
-Ce fichier est généré à chaque démarrage de `mkdocs serve` ou à chaque build.
-
-Le seul intérêt de ce fichier est que l'on peut l'utiliser en copiant-collant son contenu pour le coller dans les différentes pages d'accueil (`index.md`).
-
-
-## Masquer la navigation
-
-On peut masquer la partie navigation qui est à gauche sur chaque page, sur la page d'accueil principale en insérant cette balise en haut du markdown :
-
-```
----
-hide:
-  - navigation
-  - toc
----
-```
-
 [voir la doc officielle](https://squidfunk.github.io/mkdocs-material/setup/setting-up-navigation/#hiding-the-sidebars).
 
 
