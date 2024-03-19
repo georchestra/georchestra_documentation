@@ -133,4 +133,7 @@ dmypy.json
 
 .DS_Store
 
-docs/tableofcontent.md
+docs/fr/tableofcontent.md
+
+.idea
+generated

@@ -1,0 +1,58 @@
+
+repo_url: https://github.com/georchestra/georchestra_documentation
+repo_name: georchestra-documentation
+
+edit_uri: edit/main/docs/
+
+theme:
+  features:
+    - toc.integrate
+    - navigation.indexes
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.footer
+  logo: images/georchestra-logo-white.svg
+  favicon: images/favicon.ico
+  name: material
+
+extra:
+  version:
+    provider: mike
+
+
+  generator: false
+  social:
+    - icon: fontawesome/solid/paper-plane
+      link: mailto:psc@georchestra.org
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/georchestra
+    - icon: fontawesome/brands/github
+      link: https://github.com/georchestra
+    - icon: fontawesome/brands/google
+      link: https://groups.google.com/g/georchestra?hl=en
+    - icon: fontawesome/brands/dev
+      link: https://groups.google.com/group/georchestra-dev?hl=fr
+    - icon: fontawesome/regular/comments
+      link: https://kiwiirc.com/client/irc.libera.chat/georchestra
+copyright: '© 2023 - geOrchestra'
+
+extra_css:
+    - css/extra.css
+
+extra_javascript:
+    - assets/custom_versions.js
+
+
+
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+
+plugins:
+    - search
+    - callouts
+    - git-revision-date-localized:
+        enable_creation_date: true
+
