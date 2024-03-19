@@ -2,19 +2,18 @@
 
 
 
-## Insérer un sommaire
+## Générer un index des pages pour copier-coller
 
-Le plugin **mkdocs-toc-md**  crée à chaque démarrage de `mkdocs serve`un fichier `tableofcontent.md`. Celui-ci contient une table des matières avec les liens vers les différentes pages.
+Le plugin optionnel **mkdocs-toc-md** permet de créer un ficher `tableofcontent.md` à la racine du répertoire `docs`. Celui-ci contient une table des matières avec les liens vers les différentes pages de votre documentation.
 
-On peut ensuite l'utiliser en copiant-collant son contenu pour le coller dans les différentes pages d'accueil (`index.md`).
+Ce fichier est généré à chaque démarrage de `mkdocs serve` ou à chaque build.
 
+Le seul intérêt de ce fichier est que l'on peut l'utiliser en copiant-collant son contenu pour le coller dans les différentes pages d'accueil (`index.md`).
 
 
 ## Masquer la navigation
 
-On veut masquer la partie navigation qui est à gauche sur chaque page, sur la page d'accueil principale.
-
-On insère donc cette balise en haut du markdown :
+On peut masquer la partie navigation qui est à gauche sur chaque page, sur la page d'accueil principale en insérant cette balise en haut du markdown :
 
 ```
 ---
