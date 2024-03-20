@@ -48,7 +48,7 @@ extra_javascript:
 
 # arborescence de 1er et 2e niveau à gérer ici
 # Ces entrées correspondent au modèle de documentation
-
+# Here do not put .fr or .en extension
 nav:
     - Accueil: index.md 
     - Guide utilisateur:

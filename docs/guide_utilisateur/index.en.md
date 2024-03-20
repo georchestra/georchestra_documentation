@@ -1,21 +1,22 @@
-# User guide index
+# Sommaire du guide utilisateur
 
-This page is dedicated to the summary of the component's user guide, that is to say the reference documentation which describes all the functionalities and tools of the component intended for **users**.
-The table of contents for the guide is embedded here.
+Cette page est dédiée au sommaire du guide utilisateur du composant, c'est-à-dire à la documentation de référence qui décrit toutes les fonctionnalités et outils du composant à destination des **utilisateurs**.
+La table des matières pour le guide est intégrée ici.
 
-**Recommendations**:
+**Recommandations**:
 
-- After this page, start with a "Global View" part of the tool which presents the main window of the component.
-- Add as many screenshots as possible to illustrate. Images are stored in the `images` directory.
+- Après cette page, commencer par une partie "Vue globale" de l'outil qui présente la fenêtre principale du composant.
+- Ajouter un maximum de captures d'écran pour illustrer. Les images sont stockées dans le répertoire `images`.
 
-Example of guide tree for Mapstore2:
+Exemple d'arborescence du guide pour Mapstore2 :
 
-- Global view of the component
-- Manage layer settings
-- The attribute table
-- The menu bar
-- Print a card
+- Vue globale du composant
+- Gérer les paramètres des couches
+- La table attributaire
+- La barre de menus
+- Imprimer une carte
 ...
+
 
 
 
