@@ -1,63 +1,57 @@
-# Aide à la syntaxe
+# Syntax Help
 
-Cette page n'est là que pour aider les rédacteur à prendre en main la syntaxe markdown elle-même enrichie par mkdocs et ses plugins.
+This page is here to help writers get acquainted with the markdown syntax itself enhanced by mkdocs and its plugins.
 
-Se reporter à [ce site](https://www.markdownguide.org/basic-syntax/) pour des exemples plus fournis de syntaxe en Markdown.
+Refer to [this site](https://www.markdownguide.org/basic-syntax/) for more comprehensive examples of Markdown syntax.
 
 
 
-## Titres et hiérarchisation
+## Headings and Hierarchy
 
 
 ## Images
 
-Mettre les images dans le répertoire `images` du même niveau que le fichier markdown.
+Place images in the `images` directory at the same level as the markdown file.
 
-`![logo georchestra](images/georchestra-logo.svg)`
+`![georchestra logo](images/georchestra-logo.svg)`
 
-![logo georchestra](images/georchestra-logo.svg)
-
-
-
-## Liens
+![georchestra logo](images/georchestra-logo.svg)
 
 
-## Notes, avertissements
 
-Pour obtenir des blocs spécifique pour attirer l'attention du lecteur, il faut :
+## Links
 
-- installer le module Python `mkdocs-callouts`
-- dans le fichier `mkdocs.yml` : rajouter des `markdown_extensions` et un `plugin` (déclarés par défaut)
 
-Voir [https://squidfunk.github.io/mkdocs-material/reference/admonitions/](https://squidfunk.github.io/mkdocs-material/reference/admonitions/) pour plus d'informations.
+## Notes, Warnings
 
-Exemples ci-dessous, regarder le fichier markdown pour le code source.
+To obtain specific blocks to draw the reader's attention, you need to:
+
+- Install the Python module `mkdocs-callouts`
+- In the `mkdocs.yml` file: add `markdown_extensions` and a `plugin` (default declared)
+
+See [https://squidfunk.github.io/mkdocs-material/reference/admonitions/](https://squidfunk.github.io/mkdocs-material/reference/admonitions/) for more information.
+
+Examples below, check the markdown file for the source code.
 
 
 !!! note "Note"
 
-	Logoden biniou degemer. Kerzu pe c’huzh. Niverenn skrijañ bennak. Ler ugent ma. Meurzh kompren koll. Dreuz Egineg an. An kas gortoz. C’higer mouezh Gerveur. Nor ur alies. Drezoc'h gwengolo kuzuliañ.
-	
-	Mestr kemmañ talvezout. Anezhañ kenavo tasenn. Neud laezh tarv. Warnomp an bleun. Vuoc’h da Plouneour-Menez. Bouton votez ac’hano. Huñvre c’hof poazhañ. Da pevar muiañ. Doñjer gouel alc’houez. Pluenn siminal hed.
+    Logoden biniou welcome. December or huzh. Some specific number. Ler ugent ma. Meurzh understanding koll. Dreuz Egineg an. An kas gortoz. C’higer mouezh Gerveur. Nor ur alies. Drezoc'h gwengolo kuzuliañ.
+    
+    Mestr kemmañ talvezout. Anezhañ kenavo tasenn. Neud laezh tarv. Warnomp an bleun. Vuoc’h da Plouneour-Menez. Bouton votez ac’hano. Huñvre c’hof poazhañ. Da pevar muiañ. Doñjer gouel alc’houez. Pluenn siminal hed.
 
 
 
-!!! tip "Astuce"
+!!! tip "Tip"
 
-	Logoden biniou degemer. Kerzu pe c’huzh. Niverenn skrijañ bennak. Ler ugent ma. Meurzh kompren koll. Dreuz Egineg an. An kas gortoz. C’higer mouezh Gerveur. Nor ur alies. Drezoc'h gwengolo kuzuliañ.
-	
-	Mestr kemmañ talvezout. Anezhañ kenavo tasenn. Neud laezh tarv. Warnomp an bleun. Vuoc’h da Plouneour-Menez. Bouton votez ac’hano. Huñvre c’hof poazhañ. Da pevar muiañ. Doñjer gouel alc’houez. Pluenn siminal hed.
-
-
-!!! warning "Attention"
-
-	Logoden biniou degemer. Kerzu pe c’huzh. Niverenn skrijañ bennak. Ler ugent ma. Meurzh kompren koll. Dreuz Egineg an. An kas gortoz. C’higer mouezh Gerveur. Nor ur alies. Drezoc'h gwengolo kuzuliañ.
-	
-	Mestr kemmañ talvezout. Anezhañ kenavo tasenn. Neud laezh tarv. Warnomp an bleun. Vuoc’h da Plouneour-Menez. Bouton votez ac’hano. Huñvre c’hof poazhañ. Da pevar muiañ. Doñjer gouel alc’houez. Pluenn siminal hed.
-
- 
+    Logoden biniou welcome. December or huzh. Some specific number. Ler ugent ma. Meurzh understanding koll. Dreuz Egineg an. An kas gortoz. C’higer mouezh Gerveur. Nor ur alies. Drezoc'h gwengolo kuzuliañ.
+    
+    Mestr kemmañ talvezout. Anezhañ kenavo tasenn. Neud laezh tarv. Warnomp an bleun. Vuoc’h da Plouneour-Menez. Bouton votez ac’hano. Huñvre c’hof poazhañ. Da pevar muiañ. Doñjer gouel alc’houez. Pluenn siminal hed.
 
 
+!!! warning "Warning"
 
-
+    Logoden biniou welcome. December or huzh. Some specific number. Ler ugent ma. Meurzh understanding koll. Dreuz Egineg an. An kas gortoz. C’higer mouezh Gerveur. Nor ur alies. Drezoc'h gwengolo kuzuliañ.
+    
+    Mestr kemmañ talvezout. Anezhañ kenavo tasenn. Neud laezh tarv. Warnomp an bleun. Vuoc’h da Plouneour-Menez. Bouton votez ac’hano. Huñvre c’hof poazhañ. Da pevar muiañ. Doñjer gouel alc’houez. Pluenn siminal hed.
 

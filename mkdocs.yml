@@ -105,7 +105,7 @@ plugins:
             default: true
             name: Français
             build: true
-            site_name: Template pour la documentation d'un composant geOrchestra"
+            site_name: "Template pour la documentation d'un composant geOrchestra"
           - locale: en
             name: English
             build: true
@@ -114,9 +114,9 @@ plugins:
               Accueil: "Home"
               Guide utilisateur: "User guide"
               Sommaire: "Summary"
-              Prendre en main: "Get started"
+              Prendre en main: "Getting started"
               Guides techniques: "Technical guides"
-              Vue globale: "Overall view"
+              Vue globale: "Global overview"
               Barres ou menus d''outils: "Tool menu"
               Aide syntaxe: "Help syntaxe"
               Administrer: "Administrate"

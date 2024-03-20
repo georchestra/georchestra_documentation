@@ -1,6 +1,6 @@
-# Barre ou menu d'outils
+# Toolbar or Menu
 
-Présentation d'un premier ensemble d'outils, avec captures d'écran à l'appui le plus souvent possible pour ne pas perdre l'utilisateur.
-Les images sont stockées dans le répertoire `images`.
+Introduction to a first set of tools, often accompanied by screenshots to guide the user effectively.
+Images are stored in the `images` directory.
 
-Selon le produit, une page par groupe d'outils, avec si besoin des sous-niveaux. 
+Depending on the product, there may be a page for each group of tools, with sub-levels if necessary.

@@ -1,5 +1,5 @@
-# Prendre en main rapidement
+# Getting Started Quickly
 
-Documentation assez courte sur la manière de s'y retrouver très rapidement dans le produit (en quelques clics), en focalisant sur les fonctionnalités essentielles, pour ne pas perdre des utilisateurs débutants ou peu à l'aise avec ce type d'outil.
+A relatively short documentation on how to quickly get acquainted with the product (in a few clicks), focusing on essential features, to avoid losing beginner users or those who are not comfortable with this type of tool.
 
-Si possible mettre des images et/ou schémas pour alléger visuellement, voire mettre une vidéo tutoriel.
+If possible, include images and/or diagrams to visually lighten the content, or even include a tutorial video.

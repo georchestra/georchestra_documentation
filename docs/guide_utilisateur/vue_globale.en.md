@@ -1,8 +1,7 @@
-# Vue globale
+# Global Overview
 
-Vue globale de la page qui apparaît lorsque l'on ouvre le produit, avec encards ou numéros localisant et nommant les différents outils décrits dans les différentes parties.
+An overview of the page that appears when the product is opened, with boxes or numbers indicating and naming the different tools described in the various sections.
 
-Exemple de vue globale Mapstore2 :
+Example of Mapstore2 global overview:
 
-![](images/00_vue_globale.png)
-
+![](images/00_global_view.png)
