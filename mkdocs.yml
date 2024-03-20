@@ -111,9 +111,19 @@ plugins:
             build: true
             site_name: "MkDocs static i18n plugin documentation (en)"
             nav_translations:
-              Accueil: Home
-              Guide utilisateur: User guide
-              Prendre en main: Getting Started
+              Accueil: "Home"
+              Guide utilisateur: "User guide"
+              Sommaire: "Summary"
+              Prendre en main: "Get started"
+              Guides techniques: "Technical guides"
+              Vue globale: "Overall view"
+              Barres ou menus d''outils: "Tool menu"
+              Aide syntaxe: "Help syntaxe"
+              Administrer: "Administrate"
+              Installer: "Install"
+              Développer: "Contribute"
+
+
   - git-revision-date-localized:
       enable_creation_date: true
 
