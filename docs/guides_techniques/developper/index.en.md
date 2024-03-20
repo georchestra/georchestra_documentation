@@ -1,17 +1,16 @@
-# Sommaire
+# Table of Contents
 
-Sommaire de la partie "Développer"
+Table of Contents for the "Develop" Section
 
-![](images/developper.jpg)
+![Develop](images/developper.jpg)
 
-Voici ce qui est attendu comme documentation pour cette partie :
+Here's what is expected for documentation in this section:
 
-- décrire la séparation entre la partie client et la partie serveur
-- donner les URL vers les API
-- décrire les méthodes des API (sauf si swagger intégré)
-- matrice des fonctionnalités
+- Describe the separation between the client and server parts.
+- Provide URLs to the APIs.
+- Describe the methods of the APIs (unless Swagger is integrated).
+- Feature matrix.
 
-Si cela est possible et pertinent : documenter la création ou l'utilisation d'un modèle (template) de développement utilisant le composant.
+If possible and relevant: document the creation or use of a development template using the component.
 
-
-Les images sont stokées dans le répertoire `images`.
+Images are stored in the `images` directory.

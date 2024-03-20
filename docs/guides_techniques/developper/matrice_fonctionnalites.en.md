@@ -1,8 +1,3 @@
-# Matrice des fonctionnalités
+# Feature Matrix
 
-
-Décrire ici la liste des fonctionnalités, sous la forme de tableau si possible ?
-
-
-
-
+Describe here the list of features, ideally in the form of a table.

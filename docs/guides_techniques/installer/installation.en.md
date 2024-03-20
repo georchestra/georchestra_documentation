@@ -1,7 +1,7 @@
 # Installation
 
-Comment installer le composant:
+How to install the component:
 
-- git clonne / télécharge les binaires
-- installer les dependances/librairie requise
-- démarrer une démo avec configuration par défaut
+- Clone/download from git or download binaries.
+- Install required dependencies/libraries.
+- Start a demo with default configuration.

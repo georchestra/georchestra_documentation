@@ -1,12 +1,9 @@
-# Présentation
+# Presentation
 
-## Architecture composant
+## Component Architecture
 
-Présentation de la hiérarchie du composant
+Introduction to the component hierarchy.
 
+## Recommendation
 
-
-
-## Recommandation
-
-Recommandation sur l'architecture de l'installation 
+Recommendation on the installation architecture.

@@ -1,7 +1,3 @@
-# Une page
+# A Page
 
-
-Une page de la partie "Administrer"
-
-
-
+A page from the "Administration" section.

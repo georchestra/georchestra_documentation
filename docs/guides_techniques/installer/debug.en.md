@@ -1,13 +1,13 @@
-# Debug
+# Debugging
 
-## Debug
+## Debugging
 
-Comment obtenir du debug (+plus d'information dans la console ?)
+How to obtain debugging information (additional information in the console)?
 
-## Log
+## Logging
 
-Comment son construit les logs
+How are logs constructed?
 
-Ou sont il stocker par default (ou envoyé à distance)
+Where are they stored by default (or sent remotely)?
 
-Comment modifier la localisation/cible distante
+How to modify the location/remote target?

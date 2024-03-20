@@ -1,10 +1,9 @@
-# Prérequis
+# Prerequisites
 
-## Matériel
+## Hardware
 
-5 Go de ram, 2 cpu, 10Go disques, etc.
+5 GB RAM, 2 CPUs, 10 GB disk space, etc.
 
+## Software
 
-## Logiciel
-
-Indiquer les dépendances à des librairies ou logiciels.
+List the dependencies on libraries or software.

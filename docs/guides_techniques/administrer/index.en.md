@@ -1,24 +1,14 @@
-# Sommaire
+# Table of Contents
 
+Table of Contents for the Administration Section
 
-Sommaire de la partie Administrer
+This section of the documentation is dedicated to content administration:
 
-Cette partie de la documentation est dédiée à l'administration du contenu:
+- Data Management
+- Data Updates
+- User Management
+- ...
 
+Place images in the `images` directory.
 
--  gestion des données
--  mise à jour des données
--  gestion des utilisateurs
--  ...
-
-
-Mettre les images dans le répertoire `images`.
-
-
-![](images/gestion_donnees.jpg)
-
-
-
-
-
-
+![Data Management](images/gestion_donnees.jpg)

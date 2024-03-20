@@ -1,7 +1,7 @@
 # Configuration
 
-Comment configurer le composant:
+How to configure the component:
 
-- explication des différentes brique de configuration (ou et quoi)
-- liste des configurations possible
-- exemple avec des cas concret, je veux faire ça avec la réponse
+- Explanation of the different configuration components (where and what).
+- List of possible configurations.
+- Example with concrete cases: I want to achieve this with the response.

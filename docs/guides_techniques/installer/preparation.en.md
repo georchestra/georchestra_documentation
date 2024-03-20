@@ -1,3 +1,3 @@
-# Préparation
+# Preparation
 
-Comment préparer les prérequis
+How to prepare the prerequisites.

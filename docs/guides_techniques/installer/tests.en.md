@@ -1,5 +1,5 @@
-# Tests
+# Testing
 
-Vérification que tout est fonctionnel
+Verification that everything is functional.
 
-Indication de la page de status ?
+Indication of the status page?

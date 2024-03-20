@@ -1,21 +1,21 @@
-# Sommaire
+# Table of Contents
+
+Table of Contents for the "Install" Section
 
 
-Sommaire de la partie Installer
 
+## [Presentation](guides_techniques/installer/presentation/#presentation)
+### [Component Architecture](guides_techniques/installer/presentation/#component-architecture)
+### [Recommendation](guides_techniques/installer/presentation/#recommendation)
+## [Prerequisites](guides_techniques/installer/prerequis/#prerequis)
+### [Hardware](guides_techniques/installer/prerequis/#materiel)
+### [Software](guides_techniques/installer/prerequis/#logiciel)
+## [Preparation](guides_techniques/installer/preparation/#preparation)
+## [Installation](guides_techniques/installer/installation/#installation)
+## [Configuration](guides_techniques/installer/configuration/#configuration)
+## [Debugging](guides_techniques/installer/debug/#debug)
+### [Debugging](guides_techniques/installer/debug/#debug_1)
+### [Logging](guides_techniques/installer/debug/#log)
+## [Testing](guides_techniques/installer/tests/#tests)
 
-
-## [Présentation](guides_techniques/installer/00_presentation.md#presentation)
-### [Architecture composant](guides_techniques/installer/00_presentation.md#architecture-composant)
-### [Recommandation](guides_techniques/installer/00_presentation.md#recommandation)
-## [Prérequis](guides_techniques/installer/01_prerequis.md#prerequis)
-### [Matériel](guides_techniques/installer/01_prerequis.md#materiel)
-### [Logiciel](guides_techniques/installer/01_prerequis.md#logiciel)
-## [Préparation](guides_techniques/installer/02_preparation.md#preparation)
-## [Installation](guides_techniques/installer/03_installation.md#installation)
-## [Configuration](guides_techniques/installer/04_configuration.md#configuration)
-## [Debug](guides_techniques/installer/05_debug.md#debug)
-### [Debug](guides_techniques/installer/05_debug.md#debug_1)
-### [Log](guides_techniques/installer/05_debug.md#log)
-## [Tests](guides_techniques/installer/06_tests.md#tests)
 

@@ -1,9 +1,4 @@
-# Documentation de l'API
+# API Documentation
 
-
-- donner les URL vers les API
-- décrire les méthodes des API (sauf si swagger intégré -> url vers le swagger)
-
-
-
-
+- Provide URLs to the APIs.
+- Describe the methods of the APIs (unless Swagger is integrated -> URL to Swagger).

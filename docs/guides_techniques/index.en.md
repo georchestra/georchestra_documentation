@@ -1,7 +1,5 @@
-# Index des guides techniques
+# Technical Guides Index
 
-## Sommaire
+## Table of Contents
 
-sommaire
-
-
+Table of contents.
