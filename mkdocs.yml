@@ -10,7 +10,7 @@ edit_uri: edit/main/docs/
 theme:
   language: fr  
   features:
-    - toc.integrate
+    # - toc.integrate
     - navigation.indexes
     - navigation.tabs
     - navigation.tabs.sticky
@@ -48,7 +48,8 @@ extra_javascript:
 
 # arborescence de 1er et 2e niveau à gérer ici
 # Ces entrées correspondent au modèle de documentation
-# Here do not put .fr or .en extension
+# Here do not put .fr or .en in the name of the markdown : the i18n plugin manage this for you
+
 nav:
     - Accueil: index.md 
     - Guide utilisateur:
@@ -84,17 +85,17 @@ markdown_extensions:
 plugins:
   - search
   - callouts
-  - toc-md:
-      toc_page_title: Contents
-      toc_page_description: Summary of the section
-      header_level: 3
-      pickup_description_meta: false
-      pickup_description_class: false
-      output_path: tableofcontent.md
-      output_log: true
-      ignore_page_pattern: index.md
-      remove_navigation_page_pattern: index.md
-      template_dir_path: custom_template
+  # - toc-md:
+      # toc_page_title: Contents
+      # toc_page_description: Summary of the section
+      # header_level: 3
+      # pickup_description_meta: false
+      # pickup_description_class: false
+      # output_path: tableofcontent.md
+      # output_log: true
+      # ignore_page_pattern: index.md
+      # remove_navigation_page_pattern: index.md
+      # template_dir_path: custom_template
   - i18n:
         docs_structure: suffix
         fallback_to_default: true
@@ -127,5 +128,3 @@ plugins:
   - git-revision-date-localized:
       enable_creation_date: true
 
-
-# TODO Documenter comment simplifier l'arborescence pour un petit projet
