@@ -4,4 +4,4 @@ An overview of the page that appears when the product is opened, with boxes or n
 
 Example of Mapstore2 global overview:
 
-![](images/00_global_view.png)
+![](images/00_vue_globale.png)
