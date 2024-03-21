@@ -14,6 +14,8 @@ Il utilise [MkDocs](https://www.mkdocs.org/) et [Material for MkDocs](https://sq
 
 [Gérer la navigation](gerer_la_navigation.md)
 
+[Gérer les versions](gerer_des_versions.md)
+
 [Utiliser et configurer les fonctionnalités avancées](fonctions_avancees.md)
 
 

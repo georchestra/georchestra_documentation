@@ -12,6 +12,8 @@ Puis, une fois entré dans une de ces 2 grandes parties, par le bloc de navigati
 
 Cette partie doit être gérée à la main dans le fichier `mkdocs.yml` dans le bloc `nav:`.
 
+[voir la doc officielle](https://squidfunk.github.io/mkdocs-material/setup/setting-up-navigation/#hiding-the-sidebars).
+
 
 ## Masquer la navigation
 
